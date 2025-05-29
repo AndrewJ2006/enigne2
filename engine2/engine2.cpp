@@ -1,12 +1,14 @@
-﻿// engine2.cpp : Defines the entry point for the application.
-//
+﻿#include <PxPhysicsAPI.h>
 
-#include "engine2.h"
+int main() {
+    static physx::PxDefaultAllocator      allocator;
+    static physx::PxDefaultErrorCallback  errorCallback;
 
-using namespace std;
+    physx::PxFoundation* foundation = PxCreateFoundation(PX_PHYSICS_VERSION, allocator, errorCallback);
+    physx::PxPhysics* physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, physx::PxTolerancesScale());
 
-int main()
-{
-	cout << "Hello CMake." << endl;
-	return 0;
+    physics->release();
+    foundation->release();
+
+    return 0;
 }
