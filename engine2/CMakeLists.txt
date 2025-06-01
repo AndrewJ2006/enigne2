@@ -1,18 +1,37 @@
-﻿# Define source files
-set(SOURCES
+﻿set(SOURCES
     engine2.cpp
     engine2.h
 )
 
-# Create the executable
 add_executable(engine2 ${SOURCES})
 
-# Add PhysX include directory
-target_include_directories(engine2 SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/libs/physx/include)
-# PhysX libraries directory path
-set(PHYSX_LIB_DIR ${PROJECT_SOURCE_DIR}/libs/physx/libs)
+#physx setup
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(engine2 PRIVATE _DEBUG)
+else()
+    target_compile_definitions(engine2 PRIVATE NDEBUG)
+endif()
 
-# Link PhysX libraries by full path (recommended to avoid "not found" issues)
+target_include_directories(engine2 SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/libs/physx/include)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(PHYSX_LIB_DIR ${PROJECT_SOURCE_DIR}/libs/physx/lib/debug)
+else()
+    set(PHYSX_LIB_DIR ${PROJECT_SOURCE_DIR}/libs/physx/lib/release)
+    set(PHYSX_DLL_DIR ${PROJECT_SOURCE_DIR}/libs/DLL)
+
+    file(GLOB PHYSX_DLLS "${PHYSX_DLL_DIR}/*.dll")
+
+    foreach(dll ${PHYSX_DLLS})
+        add_custom_command(TARGET engine2 POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${dll}"
+            $<TARGET_FILE_DIR:engine2>
+            COMMENT "Copying PhysX DLL: ${dll}"
+        )
+    endforeach()
+endif()
+
 target_link_libraries(engine2 PRIVATE
     "${PHYSX_LIB_DIR}/PhysX_64.lib"
     "${PHYSX_LIB_DIR}/PhysXCommon_64.lib"
@@ -21,7 +40,6 @@ target_link_libraries(engine2 PRIVATE
     "${PHYSX_LIB_DIR}/PhysXExtensions_static_64.lib"
     "${PHYSX_LIB_DIR}/PhysXPvdSDK_static_64.lib"
 )
-
 
 # Add libraries (GLFW, GLAD, etc.)
 add_library(glfw STATIC IMPORTED)
