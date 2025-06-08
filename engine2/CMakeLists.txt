@@ -1,24 +1,24 @@
 ﻿set(SOURCES
-    engine2.cpp
-    engine2.h
+    src/engine2.cpp
+    src/engine2.h
 )
 
 add_executable(engine2 ${SOURCES})
 
-#physx setup
+# physx setup
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(engine2 PRIVATE _DEBUG)
 else()
     target_compile_definitions(engine2 PRIVATE NDEBUG)
 endif()
 
-target_include_directories(engine2 SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/libs/physx/include)
+target_include_directories(engine2 SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(PHYSX_LIB_DIR ${PROJECT_SOURCE_DIR}/libs/physx/lib/debug)
+    set(PHYSX_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/lib/debug)
 else()
-    set(PHYSX_LIB_DIR ${PROJECT_SOURCE_DIR}/libs/physx/lib/release)
-    set(PHYSX_DLL_DIR ${PROJECT_SOURCE_DIR}/libs/DLL)
+    set(PHYSX_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/lib/release)
+    set(PHYSX_DLL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/DLL)
 
     file(GLOB PHYSX_DLLS "${PHYSX_DLL_DIR}/*.dll")
 
@@ -43,14 +43,14 @@ target_link_libraries(engine2 PRIVATE
 
 # Add libraries (GLFW, GLAD, etc.)
 add_library(glfw STATIC IMPORTED)
-set_target_properties(glfw PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/libs/glfw/lib-vc2022/glfw3.lib)
-target_include_directories(glfw INTERFACE ${PROJECT_SOURCE_DIR}/libs/glfw/include)
+set_target_properties(glfw PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw/lib-vc2022/glfw3.lib)
+target_include_directories(glfw INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw/include)
 
-add_library(glad ${PROJECT_SOURCE_DIR}/libs/glad/src/glad.c)
-target_include_directories(glad PUBLIC ${PROJECT_SOURCE_DIR}/libs/glad/include)
+add_library(glad ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/src/glad.c)
+target_include_directories(glad PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/include)
 
 target_include_directories(engine2 PRIVATE
-    ${PROJECT_SOURCE_DIR}/libs/glm
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/glm
 )
 
 target_link_libraries(engine2 PRIVATE glfw glad opengl32)
