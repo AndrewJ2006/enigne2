@@ -11,8 +11,6 @@ bool GLWindow::CreateWindow(int width, int height, const std::string& title, Win
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(width, height, title.c_str(),
-        mode == WindowedMode::FULLSCREEN ? glfwGetPrimaryMonitor() : nullptr, nullptr);
 
     if (!window) {
         glfwTerminate();

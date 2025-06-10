@@ -1,13 +1,11 @@
 ﻿cmake_minimum_required(VERSION 3.15)
 project(engine2)
 
-if (MSVC)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebugDLL" CACHE STRING "MSVC Runtime Library" FORCE)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL" CACHE STRING "" FORCE)
 
-endif()
-
-##set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
 
 # Optional: Enable Edit and Continue for MSVC if policy is available
 if (POLICY CMP0141)

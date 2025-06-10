@@ -2,7 +2,7 @@
 #include <iostream>
 
 int main() {
-    std::cout << "Starting the OpenGL program...\n";
+    std::cout << "wsp gng...\n";
 
     if (!BackEnd::Init(API::OPENGL, WindowedMode::WINDOWED)) {
         std::cout << "BackEnd::Init() FAILED!\n";
