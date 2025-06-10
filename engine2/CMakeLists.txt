@@ -1,9 +1,11 @@
 ﻿cmake_minimum_required(VERSION 3.15)
 project(engine2)
 
+
 set(SOURCES
-    src/engine2.cpp
-    src/Camera/Camera.cpp
+    src/Main.cpp
+    src/Backend/Backend.cpp
+    src/Backend/GLwindow.cpp
 )
 
 add_executable(engine2 ${SOURCES})
