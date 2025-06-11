@@ -4,8 +4,10 @@ project(engine2)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL" CACHE STRING "" FORCE)
 
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+
+   
 
 # Optional: Enable Edit and Continue for MSVC if policy is available
 if (POLICY CMP0141)
@@ -16,3 +18,28 @@ endif()
 
 # Add your engine subdirectory
 add_subdirectory(engine2)
+
+
+
+#/MD = Release build with dynamic runtime
+
+#/MDd = Debug build with dynamic runtime
+
+#/MT = Release build with static runtime
+
+#/MTd = Debug build with static runtime
+
+
+
+
+
+
+#/MD = Release build with dynamic runtime
+
+#/MDd = Debug build with dynamic runtime
+
+#/MT = Release build with static runtime
+
+#/MTd = Debug build with static runtime
+
+

@@ -11,6 +11,8 @@ public:
     void SwapBuffers();
     bool ShouldClose();
 
+    ~GLWindow();  // Destructor for cleanup
+
 private:
-    // Store GLFWwindow* or your window handle here
+    struct GLFWwindow* window = nullptr;
 };

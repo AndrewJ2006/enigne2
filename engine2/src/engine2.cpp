@@ -1,4 +1,5 @@
 ﻿#include "Backend/Backend.h"
+#include "Renderer/Renderer.h"
 #include <iostream>
 
 int main() {
@@ -9,7 +10,7 @@ int main() {
         return -1;
     }
 
-    while (BackEnd::WindowIsOpen()) {
+    while (BackEnd::WindowIsOpen()) { 
         BackEnd::UpdateSubSystems();
         BackEnd::BeginFrame();
 
@@ -18,6 +19,15 @@ int main() {
         // (This could be in Backend or Renderer later)
         // For example: glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
         //              glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+        Renderer::Init();
+
+        // In your render loop:
+        Renderer::Draw();
+
+        Renderer::Shutdown();
+
 
         BackEnd::EndFrame();
     }

@@ -1,10 +1,8 @@
-// Backend.h
 #pragma once
 
 enum class API {
     OPENGL,
     VULKAN,
-    // ...
 };
 
 enum class WindowedMode {
