@@ -10,8 +10,8 @@ public:
     void BeginFrame();
     void SwapBuffers();
     bool ShouldClose();
-
-    ~GLWindow();  // Destructor for cleanup
+    bool IsKeyPressed(int key);
+    ~GLWindow();
 
 private:
     struct GLFWwindow* window = nullptr;

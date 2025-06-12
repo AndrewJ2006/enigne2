@@ -1,20 +1,12 @@
 #pragma once
-
-#include <glad/glad.h>
-#include <glm/glm.hpp>
 #include <vector>
-
-struct Vertex {
-    glm::vec3 position;
-    glm::vec3 normal;
-    glm::vec2 texCoords;
-};
+#include "Vertex.h"
+#include <glad/glad.h>
 
 class Mesh {
 public:
     Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
     ~Mesh();
-
     void Draw() const;
 
 private:
@@ -22,6 +14,5 @@ private:
 
     std::vector<Vertex> m_vertices;
     std::vector<unsigned int> m_indices;
-
     unsigned int m_VAO, m_VBO, m_EBO;
 };

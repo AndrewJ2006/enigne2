@@ -1,10 +1,17 @@
 #pragma once
-
-#include "Types/Mesh.h"
 #include <memory>
+#include <vector>
+#include "Mesh.h"
+#include "Shader.h"
+#include "Vertex.h"
 
-namespace Renderer {
-    void Init();
-    void Draw();
-    void Shutdown();
-}
+class Renderer {
+public:
+    static bool Init(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
+    static void Draw();
+    static void Shutdown();
+
+private:
+    static std::unique_ptr<Mesh> s_planeMesh;
+    static std::unique_ptr<Shader> s_shader;
+};

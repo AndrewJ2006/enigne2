@@ -1,34 +1,33 @@
 #include "Renderer.h"
-#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-// Static plane mesh
-static std::unique_ptr<Mesh> s_planeMesh;
+std::unique_ptr<Mesh> Renderer::s_planeMesh = nullptr;
+std::unique_ptr<Shader> Renderer::s_shader = nullptr;
 
-namespace Renderer {
+bool Renderer::Init(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) {
+    s_planeMesh = std::make_unique<Mesh>(vertices, indices);
+    s_shader = std::make_unique<Shader>("Plane.vert", "Plane.frag");
+    return s_planeMesh && s_shader;
+}
 
-    void Init() {
-        std::vector<Vertex> vertices = {
-            // Position             // Normal            // TexCoords
-            {{-0.5f, 0.0f, -0.5f}, {0, 1, 0}, {0.0f, 0.0f}},
-            {{ 0.5f, 0.0f, -0.5f}, {0, 1, 0}, {1.0f, 0.0f}},
-            {{ 0.5f, 0.0f,  0.5f}, {0, 1, 0}, {1.0f, 1.0f}},
-            {{-0.5f, 0.0f,  0.5f}, {0, 1, 0}, {0.0f, 1.0f}}
-        };
+void Renderer::Draw() {
+    if (!s_planeMesh || !s_shader) return;
 
-        std::vector<unsigned int> indices = {
-            0, 1, 2,
-            2, 3, 0
-        };
+    s_shader->Use();
 
-        s_planeMesh = std::make_unique<Mesh>(vertices, indices);
-    }
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 view = glm::lookAt(glm::vec3(1, 1, 2), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-    void Draw() {
-        if (s_planeMesh)
-            s_planeMesh->Draw();
-    }
+    s_shader->SetMat4("model", model);
+    s_shader->SetMat4("view", view);
+    s_shader->SetMat4("projection", projection);
 
-    void Shutdown() {
-        s_planeMesh.reset();
-    }
+    s_planeMesh->Draw();
+}
+
+void Renderer::Shutdown() {
+    s_planeMesh.reset();
+    s_shader.reset();
 }
