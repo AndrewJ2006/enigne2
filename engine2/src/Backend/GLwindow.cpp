@@ -1,37 +1,48 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+// GLWindow.cpp
+#include "GLWindow.h"
 #include <iostream>
 
-#include "GLWindow.h"
+GLWindow::GLWindow() : m_window(nullptr) {}
 
+GLWindow::~GLWindow() {
+    if (m_window) {
+        glfwDestroyWindow(m_window);
+        m_window = nullptr;
+    }
+}
 
-bool GLWindow::CreateWindow(int width, int height, const std::string& title, WindowedMode mode) {
+bool GLWindow::CreateWindow(int width, int height, const char* title, WindowedMode mode) {
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
         return false;
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    // OpenGL 3.3 Core Profile setup
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // TODO: Handle fullscreen using mode if needed
-    window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-    if (!window) {
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+    m_window = glfwCreateWindow(width, height, title,
+        mode == WindowedMode::FULLSCREEN ? glfwGetPrimaryMonitor() : nullptr,
+        nullptr);
+    if (!m_window) {
         std::cerr << "Failed to create GLFW window\n";
         glfwTerminate();
         return false;
     }
 
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Enable VSync
+    glfwMakeContextCurrent(m_window);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to initialize GLAD\n";
-        glfwDestroyWindow(window);
-        glfwTerminate();
         return false;
     }
+
+    glfwSwapInterval(1); // vsync
 
     return true;
 }
@@ -40,21 +51,28 @@ void GLWindow::PollEvents() {
     glfwPollEvents();
 }
 
-void GLWindow::BeginFrame() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void GLWindow::SwapBuffers() {
+    if (m_window)
+        glfwSwapBuffers(m_window);
 }
 
-void GLWindow::SwapBuffers() {
-    glfwSwapBuffers(window);
+void GLWindow::BeginFrame() {
+    // Optional: clear screen here or in your renderer
 }
 
 bool GLWindow::ShouldClose() {
-    return glfwWindowShouldClose(window);
+    return m_window ? glfwWindowShouldClose(m_window) : true;
 }
 
-GLWindow::~GLWindow() {
-    if (window) {
-        glfwDestroyWindow(window);
-        glfwTerminate();
+GLFWwindow* GLWindow::GetGLFWWindow() const {
+    return m_window;
+}
+
+void GLWindow::GetFramebufferSize(int& width, int& height) const {
+    if (m_window)
+        glfwGetFramebufferSize(m_window, &width, &height);
+    else {
+        width = 0;
+        height = 0;
     }
 }

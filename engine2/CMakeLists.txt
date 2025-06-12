@@ -6,6 +6,8 @@
     src/Types/Plane.cpp
     src/Renderer/Renderer.cpp
     src/Camera/Camera.cpp
+    src/Core/Game.cpp
+
     res/Shader/Shader.cpp
 
 )
@@ -18,6 +20,8 @@ target_include_directories(Main PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Renderer
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Backend
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Camera
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Core
+
 
     ${CMAKE_CURRENT_SOURCE_DIR}/res/Shader
 

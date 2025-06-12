@@ -1,18 +1,24 @@
+// GLWindow.h
 #pragma once
-#include <string>
 
-enum class WindowedMode;
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include "Backend.h"  // For WindowedMode enum
 
 class GLWindow {
 public:
-    bool CreateWindow(int width, int height, const std::string& title, WindowedMode mode);
-    void PollEvents();
-    void BeginFrame();
-    void SwapBuffers();
-    bool ShouldClose();
-    bool IsKeyPressed(int key);
+    GLWindow();
     ~GLWindow();
 
+    bool CreateWindow(int width, int height, const char* title, WindowedMode mode);
+    void PollEvents();
+    void SwapBuffers();
+    void BeginFrame();
+    bool ShouldClose();
+
+    GLFWwindow* GetGLFWWindow() const;
+    void GetFramebufferSize(int& width, int& height) const;
+
 private:
-    struct GLFWwindow* window = nullptr;
+    GLFWwindow* m_window = nullptr;
 };
