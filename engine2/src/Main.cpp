@@ -5,15 +5,14 @@
 #include <iostream>
 
 int main() {
-    std::cout << "Starting...\n";
+    std::cout << "life\n";
 
     if (!Backend::Init(API::OPENGL, WindowedMode::WINDOWED)) {
         std::cerr << "Backend::Init() FAILED!\n";
         return -1;
     }
 
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
+
 
     std::vector<Vertex> vertices = Hardcoded::GetPlaneVertices();
     std::vector<unsigned int> indices = Hardcoded::GetPlaneIndices();

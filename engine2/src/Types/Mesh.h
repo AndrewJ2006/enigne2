@@ -16,3 +16,4 @@ private:
     std::vector<unsigned int> m_indices;
     unsigned int m_VAO, m_VBO, m_EBO;
 };
+

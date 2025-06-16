@@ -7,6 +7,7 @@
     src/Renderer/Renderer.cpp
     src/Camera/Camera.cpp
     src/Core/Game.cpp
+    src/AssetManager/AssetManager.cpp
 
     res/Shader/Shader.cpp
 
@@ -16,11 +17,14 @@ add_executable(Main ${SOURCES})
 
 target_include_directories(Main PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Types
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Renderer
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Backend
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Camera
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Core
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Base
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Types
+
+
 
 
     ${CMAKE_CURRENT_SOURCE_DIR}/res/Shader

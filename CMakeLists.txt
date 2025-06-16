@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
-   
+
 
 # Optional: Enable Edit and Continue for MSVC if policy is available
 if (POLICY CMP0141)
@@ -32,14 +32,15 @@ add_subdirectory(engine2)
 
 
 
+#Defualt Visual studio Compiler
+
+# cmake ..
+# cmake --build .
 
 
-#/MD = Release build with dynamic runtime
+# Ninja build setup (json file automatically take care of ninja in out folder)
 
-#/MDd = Debug build with dynamic runtime
-
-#/MT = Release build with static runtime
-
-#/MTd = Debug build with static runtime
+# cmake -G Ninja ..
+# ninja
 
 

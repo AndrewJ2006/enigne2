@@ -16,18 +16,7 @@ void Game::Init() {
 }
 
 void Game::Update(float deltaTime) {
-    if (Backend::IsKeyPressed(GLFW_KEY_W))
-        m_camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (Backend::IsKeyPressed(GLFW_KEY_S))
-        m_camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (Backend::IsKeyPressed(GLFW_KEY_A))
-        m_camera.ProcessKeyboard(LEFT, deltaTime);
-    if (Backend::IsKeyPressed(GLFW_KEY_D))
-        m_camera.ProcessKeyboard(RIGHT, deltaTime);
-
-    float mouseX, mouseY;
-    Backend::GetMouseDelta(mouseX, mouseY);
-    m_camera.ProcessMouseMovement(mouseX, mouseY);
+    m_camera.UpdateFromInput(deltaTime);
 }
 
 void Game::Render() {
@@ -37,7 +26,6 @@ void Game::Render() {
 
     Renderer::DrawScene(view, projection);
 }
-
 
 bool Game::ShouldClose() {
     return Backend::WindowShouldClose();
