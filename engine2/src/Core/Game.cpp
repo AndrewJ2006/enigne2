@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Backend.h"
 #include "Renderer.h"
+#include "AssetManager/AssetManager.h"
 #include <glm/glm.hpp>
 
 Game::Game()
@@ -12,7 +13,8 @@ Game::Game()
 }
 
 void Game::Init() {
-    // Any game initialization here
+    AssetManager::Init();  // ? load primitives here
+    Renderer::Init();      // ? use data from AssetManager
 }
 
 void Game::Update(float deltaTime) {

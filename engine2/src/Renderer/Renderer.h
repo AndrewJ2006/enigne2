@@ -8,11 +8,10 @@
 
 class Renderer {
 public:
-    static bool Init(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
-    static void Draw();          // <-- this Draw() matches main.cpp call
+    static bool Init();  
+    static void Draw();
     static void Shutdown();
 
-    // Optional: You can also keep DrawScene if you want
     static void DrawScene(const glm::mat4& view, const glm::mat4& projection);
 
 private:
