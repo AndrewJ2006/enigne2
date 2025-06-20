@@ -1,0 +1,2 @@
+# Ignore libraries from language stats
+libs/** linguist-vendored
