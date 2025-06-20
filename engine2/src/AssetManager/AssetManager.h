@@ -1,11 +1,14 @@
 #pragma once
 #include <vector>
-#include "Vertex.h"
+#include "Base/Types.h"  // for Vertex
 
-namespace AssetManager {
-    void Init();
-    const std::vector<Vertex>& GetCubeVertices();
-    const std::vector<unsigned int>& GetCubeIndices();
-    const std::vector<Vertex>& GetPlaneVertices();
-    const std::vector<unsigned int>& GetPlaneIndices();
-}
+class AssetManager {
+public:
+    static void Init();
+    static const std::vector<Vertex>& GetCubeVertices();
+    static const std::vector<unsigned int>& GetCubeIndices();
+
+private:
+    static std::vector<Vertex> s_cubeVertices;
+    static std::vector<unsigned int> s_cubeIndices;
+};

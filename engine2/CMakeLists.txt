@@ -8,8 +8,10 @@
     src/Camera/Camera.cpp
     src/Core/Game.cpp
     src/AssetManager/AssetManager.cpp
-
+    src/World/World.cpp
+    src/Types/Cube.cpp
     res/Shader/Shader.cpp
+
 
 )
 
@@ -23,7 +25,8 @@ target_include_directories(Main PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Core
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Base
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Types
-
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/AssetManager
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/World
 
 
 

@@ -1,11 +1,10 @@
 ﻿#include "Backend.h"
-#include "Renderer.h"
 #include "Game.h"
+#include "Renderer.h"
 #include <iostream>
+#include <glad/glad.h>
 
 int main() {
-    std::cout << "life\n";
-
     if (!Backend::Init(API::OPENGL, WindowedMode::WINDOWED)) {
         std::cerr << "Backend::Init() FAILED!\n";
         return -1;

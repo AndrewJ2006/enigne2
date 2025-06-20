@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Vertex.h"
+#include "Types.h"
 #include <glad/glad.h>
 
 class Mesh {

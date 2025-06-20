@@ -1,21 +1,21 @@
 #include "AssetManager.h"
-#include "Base/PrimitiveShapes.h" 
-#include "Vertex.h"
+#include "Base/PrimitiveShapes.h"  // contains Primitves namespace
+#include "Base/Types.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>  // for glm::normalize
 
-static std::vector<Vertex> s_cubeVertices;
-static std::vector<unsigned int> s_cubeIndices;
+std::vector<Vertex> AssetManager::s_cubeVertices;
+std::vector<unsigned int> AssetManager::s_cubeIndices;
 
 void AssetManager::Init() {
-    auto positions = Primitves::CreateCubeVertices(0.5f);
-    auto indices = Primitves::CreateCubeIndices();
+    auto positions = Primitives::CreateCubeVertices(0.5f);  // note namespace spelling exactly as in PrimitiveShapes.h
+    auto indices = Primitives::CreateCubeIndices();
 
     s_cubeVertices.clear();
     for (const auto& pos : positions) {
-        Vertex v;
-        v.position = pos;
-        v.normal = glm::vec3(0.0f, 1.0f, 0.0f);  // default normal
-        v.texCoords = glm::vec2(0.0f);           // default texCoords
-        s_cubeVertices.push_back(v);
+        glm::vec3 normal = glm::normalize(pos);  // approximate normal vector
+        glm::vec2 texCoords(0.0f, 0.0f);         // placeholder UV coords
+        s_cubeVertices.emplace_back(pos, normal, texCoords);
     }
 
     s_cubeIndices = indices;

@@ -1,7 +1,8 @@
 #pragma once
+#include <vector>
 #include <glm/vec3.hpp>
 
-namespace Primitves {
+namespace Primitives {
 
     inline std::vector<glm::vec3> CreateCubeVertices(float size) {
         std::vector<glm::vec3> vertices;
@@ -33,7 +34,14 @@ namespace Primitves {
     }
 
     inline std::vector<unsigned int> CreateCubeIndices() {
-        return { 0, 1, 3, 1, 2, 3, 7, 5, 4, 7, 6, 5, 11, 9, 8, 11, 10, 9, 12, 13, 15, 13, 14, 15, 16, 17, 19, 17, 18, 19, 23, 21, 20, 23, 22, 21 };
+        return {
+            0, 1, 3, 1, 2, 3,
+            7, 5, 4, 7, 6, 5,
+            11, 9, 8, 11, 10, 9,
+            12, 13, 15, 13, 14, 15,
+            16, 17, 19, 17, 18, 19,
+            23, 21, 20, 23, 22, 21
+        };
     }
 
-}
+} // namespace Primitives
