@@ -27,5 +27,4 @@ dependencies/**/build/
 dependencies/**/bin/
 dependencies/**/lib/
 
-# Undo when sharing cmake project
-CMakePresets.json
+libs/
