@@ -1,59 +1,73 @@
 #include "World/World.h"
-#include "Types/Mesh.h"
-#include "AssetManager/AssetManager.h"
+#include "Types/Wall.h"
+#include "Types/Plane.h"
+#include "Types/Door.h"
 #include "Renderer/Renderer.h"
+#include "AssetManager/AssetManager.h"
+#include "JSON.h"
+#include "Shader/Shader.h"
+#include "Types/Mesh.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <nlohmann/json.hpp>
 
 World::World() {}
 
 World::~World() {}
 
 void World::Init() {
-    m_cubeMesh = std::make_unique<Mesh>(
-        AssetManager::GetCubeVertices(),
-        AssetManager::GetCubeIndices()
-    );
+    nlohmann::json json = JSONLoader::LoadFromFile("StartHouse.json");
 
-    // Clear any existing positions just in case
-    m_cubePositions.clear();
-
-    // Example: Create a 10x10x10 grid of cubes spaced by 2 units
-    int gridSize = 20;
-    float spacing = 10.0f;
-
-    for (int x = 0; x < gridSize; ++x) {
-        for (int y = 0; y < gridSize; ++y) {
-            for (int z = 0; z < gridSize; ++z) {
-                glm::vec3 pos(
-                    x * spacing,
-                    y * spacing,
-                    z * spacing
-                );
-                m_cubePositions.push_back(pos);
-            }
-        }
+    for (auto& info : JSONLoader::ParseWalls(json)) {
+        auto wall = std::make_unique<Wall>(info);
+        wall->Init();
+        m_walls.push_back(std::move(wall));
     }
-    std::cout << "World initialized with cube mesh and positions\n";
+
+    for (auto& info : JSONLoader::ParsePlanes(json)) {
+        auto plane = std::make_unique<Plane>(info);
+        plane->Init();
+        m_planes.push_back(std::move(plane));
+    }
+
+    for (auto& info : JSONLoader::ParseDoors(json)) {
+        auto door = std::make_unique<Door>(info);
+        door->Init();
+        m_doors.push_back(std::move(door));
+    }
+
+    std::cout << "World initialized from JSON\n";
 }
 
 void World::Update(float deltaTime) {
-    // Your update logic (if any)
+    for (auto& wall : m_walls) wall->Update();
+    for (auto& plane : m_planes) plane->Update();
+    for (auto& door : m_doors) door->Update();
 }
 
 void World::Draw() {
-    if (!m_cubeMesh) return;
-
-    Shader* shader = Renderer::GetShader();
+    auto* shader = Renderer::GetShader();
     if (!shader) return;
 
-    for (const auto& pos : m_cubePositions) {
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
+    shader->Use();
 
-        shader->Use();
+    for (const auto& wall : m_walls) {
+        glm::mat4 model = glm::mat4(1.0f); // Walls are defined in world space already
         shader->SetMat4("model", model);
+        if (wall->GetMesh()) wall->GetMesh()->Draw();
+    }
 
-        m_cubeMesh->Draw();
+    for (const auto& plane : m_planes) {
+        glm::mat4 model = glm::mat4(1.0f);
+        shader->SetMat4("model", model);
+        if (plane->GetMesh()) plane->GetMesh()->Draw();
+    }
+
+    for (const auto& door : m_doors) {
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), door->GetPosition());
+        // Optional: apply rotation with glm::rotate(model, glm::radians(...), axis);
+        shader->SetMat4("model", model);
+        if (door->GetMesh()) door->GetMesh()->Draw();
     }
 }

@@ -1,10 +1,11 @@
 #pragma once
 
-#include <memory>
 #include <vector>
-#include <glm/glm.hpp>
+#include <memory>
 
-class Mesh;
+class Wall;
+class Plane;
+class Door;
 
 class World {
 public:
@@ -16,6 +17,7 @@ public:
     void Draw();
 
 private:
-    std::unique_ptr<Mesh> m_cubeMesh;
-    std::vector<glm::vec3> m_cubePositions;
+    std::vector<std::unique_ptr<Wall>> m_walls;
+    std::vector<std::unique_ptr<Plane>> m_planes;
+    std::vector<std::unique_ptr<Door>> m_doors;
 };

@@ -2,8 +2,9 @@
 
 #include <memory>
 #include <glm/glm.hpp>
-#include "Mesh.h"
-#include "Shader.h"
+
+class Mesh;
+class Shader;
 
 class Renderer {
 public:
@@ -11,8 +12,8 @@ public:
     static void DrawScene(const glm::mat4& view, const glm::mat4& projection);
     static void Shutdown();
 
-    static Shader* GetShader() { return s_shader.get(); }
-    static Mesh* GetMesh() { return s_cubeMesh.get(); }
+    static Shader* GetShader();
+    static Mesh* GetCubeMesh();
 
 private:
     static std::unique_ptr<Mesh> s_cubeMesh;

@@ -21,6 +21,8 @@ add_executable(Main ${SOURCES})
 
 target_include_directories(Main PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/res
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Renderer
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Backend
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Camera
@@ -31,6 +33,7 @@ target_include_directories(Main PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/World
 
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/res/Geometry
 
     ${CMAKE_CURRENT_SOURCE_DIR}/res/Shader
 
@@ -46,6 +49,18 @@ foreach(shader ${SHADERS})
         COMMENT "Copying shader file: ${shader}"
     )
 endforeach()
+
+
+# Copy JSON geometry file to output directory
+add_custom_command(TARGET Main POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_CURRENT_SOURCE_DIR}/res/Geometry/StartHouse.json"
+    $<TARGET_FILE_DIR:Main>
+    COMMENT "Copying JSON file: StartHouse.json"
+)
+
+
+
 
 # nolman
 target_link_libraries(Main PRIVATE nlohmann_json::nlohmann_json)

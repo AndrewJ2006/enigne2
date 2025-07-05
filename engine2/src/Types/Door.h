@@ -1,6 +1,9 @@
 #pragma once
+
 #include <glm/glm.hpp>
-#include "JSON.h"  // For DoorCreateInfo
+#include <memory>
+#include "CreateInfo.h"
+#include "Types/Mesh.h"
 
 class Door {
 public:
@@ -11,7 +14,9 @@ public:
 
     glm::vec3 GetPosition() const;
     glm::vec3 GetRotation() const;
+    Mesh* GetMesh() const;
 
 private:
     DoorCreateInfo m_createInfo;
+    std::unique_ptr<Mesh> m_mesh;
 };

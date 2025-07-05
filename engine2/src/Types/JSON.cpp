@@ -1,6 +1,7 @@
 #include "JSON.h"
 #include <fstream>
 #include <iostream>
+#include <glm/glm.hpp>
 
 nlohmann::json JSONLoader::LoadFromFile(const std::string& filename) {
     std::ifstream file(filename);
@@ -17,7 +18,7 @@ std::vector<WallCreateInfo> JSONLoader::ParseWalls(const nlohmann::json& json) {
     std::vector<WallCreateInfo> walls;
     if (!json.contains("Walls")) return walls;
 
-    for (auto& w : json["Walls"]) {
+    for (const auto& w : json["Walls"]) {
         WallCreateInfo wall;
         wall.height = w.value("Height", 0.0f);
         wall.material = w.value("Material", "");
@@ -29,14 +30,16 @@ std::vector<WallCreateInfo> JSONLoader::ParseWalls(const nlohmann::json& json) {
         wall.wallType = w.value("WallType", "");
 
         if (w.contains("Points")) {
-            for (auto& pt : w["Points"]) {
+            for (const auto& pt : w["Points"]) {
                 if (pt.is_array() && pt.size() == 3) {
                     wall.points.emplace_back(pt[0].get<float>(), pt[1].get<float>(), pt[2].get<float>());
                 }
             }
         }
+
         walls.push_back(wall);
     }
+
     return walls;
 }
 
@@ -44,7 +47,7 @@ std::vector<PlaneCreateInfo> JSONLoader::ParsePlanes(const nlohmann::json& json)
     std::vector<PlaneCreateInfo> planes;
     if (!json.contains("Planes")) return planes;
 
-    for (auto& p : json["Planes"]) {
+    for (const auto& p : json["Planes"]) {
         PlaneCreateInfo plane;
         plane.material = p.value("Material", "");
         plane.p0 = glm::vec3(p["P0"][0], p["P0"][1], p["P0"][2]);
@@ -58,6 +61,7 @@ std::vector<PlaneCreateInfo> JSONLoader::ParsePlanes(const nlohmann::json& json)
 
         planes.push_back(plane);
     }
+
     return planes;
 }
 
@@ -65,11 +69,12 @@ std::vector<DoorCreateInfo> JSONLoader::ParseDoors(const nlohmann::json& json) {
     std::vector<DoorCreateInfo> doors;
     if (!json.contains("Doors")) return doors;
 
-    for (auto& d : json["Doors"]) {
+    for (const auto& d : json["Doors"]) {
         DoorCreateInfo door;
         door.position = glm::vec3(d["Position"][0], d["Position"][1], d["Position"][2]);
         door.rotation = glm::vec3(d["Rotation"][0], d["Rotation"][1], d["Rotation"][2]);
         doors.push_back(door);
     }
+
     return doors;
 }

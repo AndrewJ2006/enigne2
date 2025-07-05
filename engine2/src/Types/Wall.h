@@ -1,7 +1,11 @@
 #pragma once
-#include <vector>
+
 #include <glm/glm.hpp>
-#include "JSON.h"  // For WallCreateInfo
+#include <memory>
+#include <string>
+#include <vector>
+#include "CreateInfo.h"
+#include "Types/Mesh.h"
 
 class Wall {
 public:
@@ -13,7 +17,9 @@ public:
     const std::vector<glm::vec3>& GetPoints() const;
     float GetHeight() const;
     const std::string& GetMaterial() const;
+    Mesh* GetMesh() const;
 
 private:
     WallCreateInfo m_createInfo;
+    std::unique_ptr<Mesh> m_mesh;
 };

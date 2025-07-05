@@ -1,36 +1,9 @@
 #pragma once
-#include <vector>
+
 #include <string>
-#include <glm/glm.hpp>
+#include <vector>
 #include <nlohmann/json.hpp>
-
-// Structs for wall, plane, door
-
-struct WallCreateInfo {
-    float height;
-    std::string material;
-    std::vector<glm::vec3> points;
-    float textureOffsetU;
-    float textureOffsetV;
-    float textureRotation;
-    float textureScale;
-    bool useReversePointOrder;
-    std::string wallType;
-};
-
-struct PlaneCreateInfo {
-    std::string material;
-    glm::vec3 p0, p1, p2, p3;
-    float textureOffsetU;
-    float textureOffsetV;
-    float textureRotation;
-    float textureScale;
-};
-
-struct DoorCreateInfo {
-    glm::vec3 position;
-    glm::vec3 rotation;
-};
+#include "CreateInfo.h"
 
 class JSONLoader {
 public:
