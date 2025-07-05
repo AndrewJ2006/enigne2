@@ -16,9 +16,25 @@ void World::Init() {
         AssetManager::GetCubeIndices()
     );
 
-    m_cubePositions.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
-    m_cubePositions.push_back(glm::vec3(2.0f, 0.0f, 0.0f));
+    // Clear any existing positions just in case
+    m_cubePositions.clear();
 
+    // Example: Create a 10x10x10 grid of cubes spaced by 2 units
+    int gridSize = 20;
+    float spacing = 10.0f;
+
+    for (int x = 0; x < gridSize; ++x) {
+        for (int y = 0; y < gridSize; ++y) {
+            for (int z = 0; z < gridSize; ++z) {
+                glm::vec3 pos(
+                    x * spacing,
+                    y * spacing,
+                    z * spacing
+                );
+                m_cubePositions.push_back(pos);
+            }
+        }
+    }
     std::cout << "World initialized with cube mesh and positions\n";
 }
 

@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 
 int main() {
+
     if (!Backend::Init(API::OPENGL, WindowedMode::WINDOWED)) {
         std::cerr << "Backend::Init() FAILED!\n";
         return -1;

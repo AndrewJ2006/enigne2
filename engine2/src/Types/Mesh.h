@@ -3,6 +3,7 @@
 #include "Types.h"
 #include <glad/glad.h>
 
+
 class Mesh {
 public:
     Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);

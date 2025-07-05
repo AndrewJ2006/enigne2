@@ -1,6 +1,19 @@
 ﻿cmake_minimum_required(VERSION 3.15)
 project(engine2)
 
+
+
+#nolman
+include(FetchContent)
+FetchContent_Declare(
+  nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.11.2  # or whatever stable tag/version you want
+)
+FetchContent_MakeAvailable(nlohmann_json)
+
+
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

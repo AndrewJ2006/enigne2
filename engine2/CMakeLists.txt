@@ -11,7 +11,9 @@
     src/World/World.cpp
     src/Types/Cube.cpp
     res/Shader/Shader.cpp
-
+    src/Types/Wall.cpp
+    src/Types/Door.cpp
+    src/Types/JSON.cpp 
 
 )
 
@@ -45,8 +47,10 @@ foreach(shader ${SHADERS})
     )
 endforeach()
 
+# nolman
+target_link_libraries(Main PRIVATE nlohmann_json::nlohmann_json)
 
-
+# Physx
 
 target_compile_definitions(Main PRIVATE 
     $<$<CONFIG:Debug>:_DEBUG>
@@ -80,6 +84,9 @@ foreach(dll ${PHYSX_DLLS})
     )
 endforeach()
 
+
+
+
 # GLFW 
 set(GLFW_LIB_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw/debug/glfw3.lib)
 set(GLFW_LIB_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw/release/glfw3.lib)
@@ -100,4 +107,8 @@ target_include_directories(glad PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/inc
 # GLM
 target_include_directories(Main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs/glm)
 
+
+
 target_link_libraries(Main PRIVATE glfw glad opengl32)
+
+
