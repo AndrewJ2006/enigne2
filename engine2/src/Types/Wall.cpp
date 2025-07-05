@@ -17,9 +17,9 @@ void Wall::Init() {
     std::vector<unsigned int> indices;
 
     size_t n = points.size();
-    for (size_t i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n - 1; ++i) {
         glm::vec3 p0 = points[i];
-        glm::vec3 p1 = points[(i + 1) % n];
+        glm::vec3 p1 = points[i + 1];
 
         glm::vec3 p0_top = p0 + glm::vec3(0.0f, height, 0.0f);
         glm::vec3 p1_top = p1 + glm::vec3(0.0f, height, 0.0f);
@@ -29,6 +29,7 @@ void Wall::Init() {
 
         unsigned int baseIndex = static_cast<unsigned int>(vertices.size());
 
+        // Original face (front)
         vertices.push_back({ p0, normal, glm::vec2(0.0f, 0.0f) });
         vertices.push_back({ p1, normal, glm::vec2(1.0f, 0.0f) });
         vertices.push_back({ p1_top, normal, glm::vec2(1.0f, 1.0f) });
@@ -41,10 +42,29 @@ void Wall::Init() {
         indices.push_back(baseIndex);
         indices.push_back(baseIndex + 2);
         indices.push_back(baseIndex + 3);
+
+        // Back face (duplicate with reversed winding & flipped normal)
+        glm::vec3 flippedNormal = -normal;
+        unsigned int baseIndexBack = static_cast<unsigned int>(vertices.size());
+
+        vertices.push_back({ p0, flippedNormal, glm::vec2(0.0f, 0.0f) });
+        vertices.push_back({ p0_top, flippedNormal, glm::vec2(0.0f, 1.0f) });
+        vertices.push_back({ p1_top, flippedNormal, glm::vec2(1.0f, 1.0f) });
+        vertices.push_back({ p1, flippedNormal, glm::vec2(1.0f, 0.0f) });
+
+        indices.push_back(baseIndexBack);
+        indices.push_back(baseIndexBack + 1);
+        indices.push_back(baseIndexBack + 2);
+
+        indices.push_back(baseIndexBack);
+        indices.push_back(baseIndexBack + 2);
+        indices.push_back(baseIndexBack + 3);
     }
 
     m_mesh = std::make_unique<Mesh>(vertices, indices);
 }
+
+
 
 void Wall::Update() {}
 

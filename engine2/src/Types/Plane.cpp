@@ -8,7 +8,10 @@ Plane::Plane(const PlaneCreateInfo& createInfo)
 }
 
 void Plane::Init() {
-    glm::vec3 normal(0.0f, 1.0f, 0.0f);
+    // Compute normal dynamically
+    glm::vec3 edge1 = m_createInfo.p1 - m_createInfo.p0;
+    glm::vec3 edge2 = m_createInfo.p2 - m_createInfo.p0;
+    glm::vec3 normal = glm::normalize(glm::cross(edge1, edge2));
 
     std::vector<Vertex> vertices = {
         { m_createInfo.p0, normal, glm::vec2(0.0f, 0.0f) },
@@ -18,6 +21,23 @@ void Plane::Init() {
     };
 
     std::vector<unsigned int> indices = { 0, 1, 2, 2, 3, 0 };
+
+    // Create back face (optional for double-sided)
+    glm::vec3 flippedNormal = -normal;
+    unsigned int baseIndexBack = static_cast<unsigned int>(vertices.size());
+
+    vertices.push_back({ m_createInfo.p0, flippedNormal, glm::vec2(0.0f, 0.0f) });
+    vertices.push_back({ m_createInfo.p3, flippedNormal, glm::vec2(0.0f, 1.0f) });
+    vertices.push_back({ m_createInfo.p2, flippedNormal, glm::vec2(1.0f, 1.0f) });
+    vertices.push_back({ m_createInfo.p1, flippedNormal, glm::vec2(1.0f, 0.0f) });
+
+    indices.push_back(baseIndexBack);
+    indices.push_back(baseIndexBack + 1);
+    indices.push_back(baseIndexBack + 2);
+
+    indices.push_back(baseIndexBack);
+    indices.push_back(baseIndexBack + 2);
+    indices.push_back(baseIndexBack + 3);
 
     m_mesh = std::make_unique<Mesh>(vertices, indices);
 }

@@ -26,7 +26,7 @@ void Game::Render() {
     glm::mat4 view = m_camera.GetViewMatrix();
     glm::mat4 projection = m_camera.GetProjectionMatrix(aspect);
 
-    Renderer::DrawScene(view, projection);
+    Renderer::DrawScene(view, projection, m_world);
     m_world.Draw();
 }
 

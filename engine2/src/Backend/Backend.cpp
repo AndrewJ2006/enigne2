@@ -49,11 +49,11 @@ bool Backend::Init(API api, WindowedMode mode) {
         s_lastMouseY = ypos;
         });
 
-    glEnable(GL_DEPTH_TEST);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
-
+    glEnable(GL_DEPTH_TEST);
+    glCullFace(GL_BACK); // Cull only back faces
+    glDepthFunc(GL_LESS);
 
     // Set initial viewport size to current framebuffer size
     int width, height;

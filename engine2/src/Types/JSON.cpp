@@ -1,13 +1,16 @@
+
+// JSON.cpp
 #include "JSON.h"
 #include <fstream>
 #include <iostream>
+#include <algorithm> // for std::reverse
 #include <glm/glm.hpp>
 
 nlohmann::json JSONLoader::LoadFromFile(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Failed to open JSON file: " << filename << "\n";
-        return nullptr;
+        return nlohmann::json{};  // return empty JSON object instead of nullptr
     }
     nlohmann::json data;
     file >> data;
@@ -35,6 +38,11 @@ std::vector<WallCreateInfo> JSONLoader::ParseWalls(const nlohmann::json& json) {
                     wall.points.emplace_back(pt[0].get<float>(), pt[1].get<float>(), pt[2].get<float>());
                 }
             }
+        }
+
+        // Reverse points order if requested (fix winding for correct normals and culling)
+        if (wall.useReversePointOrder) {
+            std::reverse(wall.points.begin(), wall.points.end());
         }
 
         walls.push_back(wall);

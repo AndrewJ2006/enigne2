@@ -1,52 +1,114 @@
 {
-    "Doors": [
-        {
-            "Position": [ 2.0, 0.0, 0.0 ],
-            "Rotation": [ 0.0, 0.0, 0.0 ]
-        }
-    ],
-    "Planes": [
-        {
-            "Material": "WoodFloor",
-            "P0": [ 0.0, 0.0, 0.0 ],
-            "P1": [ 4.0, 0.0, 0.0 ],
-            "P2": [ 4.0, 0.0, 4.0 ],
-            "P3": [ 0.0, 0.0, 4.0 ],
-            "TextureOffsetU": 0.0,
-            "TextureOffsetV": 0.0,
-            "TextureRotation": 0.0,
-            "TextureScale": 1.0
-        },
-        {
-            "Material": "CeilingWhite",
-            "P0": [ 0.0, 2.5, 0.0 ],
-            "P1": [ 4.0, 2.5, 0.0 ],
-            "P2": [ 4.0, 2.5, 4.0 ],
-            "P3": [ 0.0, 2.5, 4.0 ],
-            "TextureOffsetU": 0.0,
-            "TextureOffsetV": 0.0,
-            "TextureRotation": 0.0,
-            "TextureScale": 1.0
-        }
-    ],
-    "Walls": [
-        {
-            "Height": 2.5,
-            "Material": "WallPlaster",
-            "Points": [
-                [ 0.0, 0.0, 0.0 ],
-                [ 4.0, 0.0, 0.0 ],
-                [ 4.0, 0.0, 4.0 ],
-                [ 0.0, 0.0, 4.0 ]
-            ],
-            "TextureOffsetU": 0.0,
-            "TextureOffsetV": 0.0,
-            "TextureRotation": 0.0,
-            "TextureScale": 1.0,
-            "TrimTypeCeiling": "NONE",
-            "TrimTypeFloor": "NONE",
-            "UseReversePointOrder": false,
-            "WallType": "INTERIOR"
-        }
-    ]
+  "Doors": [
+    {
+      "Position": [2.0, 0.0, 0.0],
+      "Rotation": [0.0, 0.0, 0.0]
+    }
+  ],
+  "Planes": [
+    {
+      "Material": "WoodFloor",
+      "P0": [0.0, 0.0, 0.0],
+      "P1": [4.0, 0.0, 0.0],
+      "P2": [4.0, 0.0, 4.0],
+      "P3": [0.0, 0.0, 4.0],
+      "TextureOffsetU": 0.0,
+      "TextureOffsetV": 0.0,
+      "TextureRotation": 0.0,
+      "TextureScale": 1.0
+    },
+    {
+      "Material": "CeilingWhite",
+      "P0": [0.0, 2.5, 0.0],
+      "P1": [4.0, 2.5, 0.0],
+      "P2": [4.0, 2.5, 4.0],
+      "P3": [0.0, 2.5, 4.0],
+      "TextureOffsetU": 0.0,
+      "TextureOffsetV": 0.0,
+      "TextureRotation": 0.0,
+      "TextureScale": 1.0
+    }
+  ],
+  "Walls": [
+    {
+      "Height": 2.5,
+      "Material": "WallPlaster",
+      "Points": [
+        [0.0, 0.0, 0.0],
+        [2.0, 0.0, 0.0]
+      ],
+      "TextureOffsetU": 0.0,
+      "TextureOffsetV": 0.0,
+      "TextureRotation": 0.0,
+      "TextureScale": 1.0,
+      "TrimTypeCeiling": "NONE",
+      "TrimTypeFloor": "NONE",
+      "UseReversePointOrder": false,
+      "WallType": "INTERIOR"
+    },
+    {
+      "Height": 2.5,
+      "Material": "WallPlaster",
+      "Points": [
+        [2.0, 0.0, 0.0],
+        [4.0, 0.0, 0.0]
+      ],
+      "TextureOffsetU": 0.0,
+      "TextureOffsetV": 0.0,
+      "TextureRotation": 0.0,
+      "TextureScale": 1.0,
+      "TrimTypeCeiling": "NONE",
+      "TrimTypeFloor": "NONE",
+      "UseReversePointOrder": false,
+      "WallType": "INTERIOR"
+    },
+    {
+      "Height": 2.5,
+      "Material": "WallPlaster",
+      "Points": [
+        [4.0, 0.0, 0.0],
+        [4.0, 0.0, 4.0]
+      ],
+      "TextureOffsetU": 0.0,
+      "TextureOffsetV": 0.0,
+      "TextureRotation": 0.0,
+      "TextureScale": 1.0,
+      "TrimTypeCeiling": "NONE",
+      "TrimTypeFloor": "NONE",
+      "UseReversePointOrder": false,
+      "WallType": "INTERIOR"
+    },
+    {
+      "Height": 2.5,
+      "Material": "WallPlaster",
+      "Points": [
+        [4.0, 0.0, 4.0],
+        [0.0, 0.0, 4.0]
+      ],
+      "TextureOffsetU": 0.0,
+      "TextureOffsetV": 0.0,
+      "TextureRotation": 0.0,
+      "TextureScale": 1.0,
+      "TrimTypeCeiling": "NONE",
+      "TrimTypeFloor": "NONE",
+      "UseReversePointOrder": false,
+      "WallType": "INTERIOR"
+    },
+    {
+      "Height": 2.5,
+      "Material": "WallPlaster",
+      "Points": [
+        [0.0, 0.0, 4.0],
+        [0.0, 0.0, 0.0]
+      ],
+      "TextureOffsetU": 0.0,
+      "TextureOffsetV": 0.0,
+      "TextureRotation": 0.0,
+      "TextureScale": 1.0,
+      "TrimTypeCeiling": "NONE",
+      "TrimTypeFloor": "NONE",
+      "UseReversePointOrder": false,
+      "WallType": "INTERIOR"
+    }
+  ]
 }

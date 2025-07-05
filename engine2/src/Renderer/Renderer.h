@@ -5,11 +5,12 @@
 
 class Mesh;
 class Shader;
+class World; // Forward declaration
 
 class Renderer {
 public:
     static bool Init();
-    static void DrawScene(const glm::mat4& view, const glm::mat4& projection);
+    static void DrawScene(const glm::mat4& view, const glm::mat4& projection, World& world); // ? Add World&
     static void Shutdown();
 
     static Shader* GetShader();

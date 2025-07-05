@@ -2,6 +2,7 @@
 #include "AssetManager/AssetManager.h"
 #include "Shader/Shader.h"
 #include "Types/Mesh.h"
+#include "World/World.h" // ? Include World so you can use it
 
 std::unique_ptr<Mesh> Renderer::s_cubeMesh = nullptr;
 std::unique_ptr<Shader> Renderer::s_shader = nullptr;
@@ -12,16 +13,14 @@ bool Renderer::Init() {
     return s_cubeMesh && s_shader;
 }
 
-void Renderer::DrawScene(const glm::mat4& view, const glm::mat4& projection) {
+void Renderer::DrawScene(const glm::mat4& view, const glm::mat4& projection, World& world) {
     if (!s_shader || !s_cubeMesh) return;
 
     s_shader->Use();
     s_shader->SetMat4("view", view);
     s_shader->SetMat4("projection", projection);
-    // World::Draw() will handle drawing actual objects
 
-
-
+    world.Draw(); // ? Actually render objects now
 }
 
 void Renderer::Shutdown() {
