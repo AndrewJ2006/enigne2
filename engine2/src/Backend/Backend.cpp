@@ -50,7 +50,10 @@ bool Backend::Init(API api, WindowedMode mode) {
         });
 
     glEnable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
+
 
     // Set initial viewport size to current framebuffer size
     int width, height;

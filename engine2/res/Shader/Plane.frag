@@ -1,7 +1,11 @@
 #version 330 core
-
 out vec4 FragColor;
 
-void main() {
-    FragColor = vec4(0.8, 0.2, 0.3, 1.0); // reddish color
+uniform vec3 uColor;
+uniform bool useTexture;
+
+void main()
+{
+    // For now, ignore textures and just use uColor
+    FragColor = vec4(uColor, 1.0);
 }

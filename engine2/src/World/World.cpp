@@ -52,22 +52,31 @@ void World::Draw() {
 
     shader->Use();
 
+    // Draw walls (gray)
     for (const auto& wall : m_walls) {
         glm::mat4 model = glm::mat4(1.0f); // Walls are defined in world space already
         shader->SetMat4("model", model);
+        shader->SetBool("useTexture", false);
+        shader->SetVec3("uColor", glm::vec3(0.7f, 0.7f, 0.7f)); // Light gray walls
         if (wall->GetMesh()) wall->GetMesh()->Draw();
     }
 
+    // Draw planes (darker gray)
     for (const auto& plane : m_planes) {
         glm::mat4 model = glm::mat4(1.0f);
         shader->SetMat4("model", model);
+        shader->SetBool("useTexture", false);
+        shader->SetVec3("uColor", glm::vec3(0.4f, 0.4f, 0.4f)); // Dark gray planes
         if (plane->GetMesh()) plane->GetMesh()->Draw();
     }
 
+    // Draw doors (brownish color)
     for (const auto& door : m_doors) {
         glm::mat4 model = glm::translate(glm::mat4(1.0f), door->GetPosition());
-        // Optional: apply rotation with glm::rotate(model, glm::radians(...), axis);
+        // TODO: apply rotation if needed
         shader->SetMat4("model", model);
+        shader->SetBool("useTexture", false);
+        shader->SetVec3("uColor", glm::vec3(0.55f, 0.27f, 0.07f)); // Brown door color
         if (door->GetMesh()) door->GetMesh()->Draw();
     }
 }

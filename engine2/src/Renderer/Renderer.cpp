@@ -19,6 +19,9 @@ void Renderer::DrawScene(const glm::mat4& view, const glm::mat4& projection) {
     s_shader->SetMat4("view", view);
     s_shader->SetMat4("projection", projection);
     // World::Draw() will handle drawing actual objects
+
+
+
 }
 
 void Renderer::Shutdown() {
