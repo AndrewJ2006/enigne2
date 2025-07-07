@@ -49,7 +49,7 @@ bool Backend::Init(API api, WindowedMode mode) {
         s_lastMouseY = ypos;
         });
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK); // Cull only back faces

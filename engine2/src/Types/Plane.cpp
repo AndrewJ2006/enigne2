@@ -1,6 +1,5 @@
 #include "Plane.h"
-#include "CreateInfo.h" // <-- ADD THIS
-#include "Types/Mesh.h"
+#include <vector>
 #include <glm/glm.hpp>
 
 Plane::Plane(const PlaneCreateInfo& createInfo)
@@ -8,7 +7,6 @@ Plane::Plane(const PlaneCreateInfo& createInfo)
 }
 
 void Plane::Init() {
-    // Compute normal dynamically
     glm::vec3 edge1 = m_createInfo.p1 - m_createInfo.p0;
     glm::vec3 edge2 = m_createInfo.p2 - m_createInfo.p0;
     glm::vec3 normal = glm::normalize(glm::cross(edge1, edge2));
@@ -22,7 +20,7 @@ void Plane::Init() {
 
     std::vector<unsigned int> indices = { 0, 1, 2, 2, 3, 0 };
 
-    // Create back face (optional for double-sided)
+    // back face
     glm::vec3 flippedNormal = -normal;
     unsigned int baseIndexBack = static_cast<unsigned int>(vertices.size());
 
@@ -34,7 +32,6 @@ void Plane::Init() {
     indices.push_back(baseIndexBack);
     indices.push_back(baseIndexBack + 1);
     indices.push_back(baseIndexBack + 2);
-
     indices.push_back(baseIndexBack);
     indices.push_back(baseIndexBack + 2);
     indices.push_back(baseIndexBack + 3);

@@ -18,7 +18,6 @@ World::~World() {}
 
 void World::Init() {
     nlohmann::json json = JSONLoader::LoadFromFile("StartHouse.json");
-
     for (auto& info : JSONLoader::ParseWalls(json)) {
         auto wall = std::make_unique<Wall>(info);
         wall->Init();

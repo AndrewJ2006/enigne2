@@ -8,7 +8,7 @@
 
 class Plane {
 public:
-    Plane(const PlaneCreateInfo& createInfo);
+    explicit Plane(const PlaneCreateInfo& createInfo);
 
     void Init();
     void Update();

@@ -17,6 +17,8 @@
 
 )
 
+
+
 add_executable(Main ${SOURCES})
 
 target_include_directories(Main PRIVATE
@@ -51,19 +53,24 @@ foreach(shader ${SHADERS})
 endforeach()
 
 
-# Copy JSON geometry file to output directory
+## JSON FILES - does not update automaitcally FIXXXXX
+file(GLOB JSON_FILES "${CMAKE_CURRENT_SOURCE_DIR}/res/Geometry/*.json")
+
 add_custom_command(TARGET Main POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${CMAKE_CURRENT_SOURCE_DIR}/res/Geometry/StartHouse.json"
-    $<TARGET_FILE_DIR:Main>
-    COMMENT "Copying JSON file: StartHouse.json"
+    COMMAND ${CMAKE_COMMAND} -E echo "Copying JSON files..."
+    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:Main>
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/res/Geometry"
+            $<TARGET_FILE_DIR:Main>
+    COMMENT "Copying all JSON files to output directory"
 )
 
 
+ ##nlohmann json FILE IN OUT FOLDER
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory(libs/nlohmann_json)
 
 
-# nolman
-target_link_libraries(Main PRIVATE nlohmann_json::nlohmann_json)
 
 # Physx
 
@@ -124,6 +131,4 @@ target_include_directories(Main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs/glm)
 
 
 
-target_link_libraries(Main PRIVATE glfw glad opengl32)
-
-
+target_link_libraries(Main PRIVATE nlohmann_json::nlohmann_json glfw glad opengl32)
