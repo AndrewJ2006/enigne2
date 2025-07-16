@@ -47,6 +47,14 @@ void PhysicsManager::Init() {
         std::cerr << "createMaterial failed!" << std::endl;
         return;
     }
+
+    // ** Add ground plane here **
+    PxRigidStatic* groundPlane = PxCreatePlane(*m_physics, PxPlane(0, 1, 0, 0), *m_material);
+    if (!groundPlane) {
+        std::cerr << "Failed to create ground plane!" << std::endl;
+        return;
+    }
+    m_scene->addActor(*groundPlane);
 }
 
 
@@ -74,4 +82,18 @@ void PhysicsManager::Cleanup() {
         m_foundation->release();
         m_foundation = nullptr;
     }
+}
+
+// *** Add the missing getter definitions here ***
+
+physx::PxPhysics* PhysicsManager::GetPhysics() const {
+    return m_physics;
+}
+
+physx::PxScene* PhysicsManager::GetScene() const {
+    return m_scene;
+}
+
+physx::PxMaterial* PhysicsManager::GetMaterial() const {
+    return m_material;
 }

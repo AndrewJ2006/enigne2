@@ -2,20 +2,24 @@
 #include "CreateInfo.h"
 #include "Types/Mesh.h"
 #include <memory>
-#include <glm/glm.hpp> // for glm::vec3
+#include <glm/glm.hpp>
+#include <PxPhysicsAPI.h>
 
 class Door {
 public:
     Door(const DoorCreateInfo& createInfo);
+
     void Init();
-    void Update();
+    void Update(float deltaTime);
+
     Mesh* GetMesh() const;
 
-    // Add these getters so World.cpp can access position and rotation
-    glm::vec3 GetPosition() const { return m_createInfo.position; }
-    glm::vec3 GetRotation() const { return m_createInfo.rotation; }
+    glm::mat4 GetModelMatrix() const { return m_modelMatrix; }
 
 private:
     DoorCreateInfo m_createInfo;
     std::unique_ptr<Mesh> m_mesh;
+
+    physx::PxRigidDynamic* m_rigidActor = nullptr;
+    glm::mat4 m_modelMatrix = glm::mat4(1.0f);
 };

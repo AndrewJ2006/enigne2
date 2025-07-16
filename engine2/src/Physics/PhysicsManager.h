@@ -1,5 +1,4 @@
 #pragma once
-
 #include <PxPhysicsAPI.h>
 
 class PhysicsManager {
@@ -10,15 +9,13 @@ public:
     void Step(float deltaTime);
     void Cleanup();
 
-    physx::PxPhysics* GetPhysics() const { return m_physics; }
-    physx::PxScene* GetScene() const { return m_scene; }
-    physx::PxMaterial* GetMaterial() const { return m_material; }
+    physx::PxPhysics* GetPhysics() const;
+    physx::PxScene* GetScene() const;
+    physx::PxMaterial* GetMaterial() const;
 
 private:
     PhysicsManager() = default;
     ~PhysicsManager() = default;
-
-    // Delete copy constructor and assignment operator
     PhysicsManager(const PhysicsManager&) = delete;
     PhysicsManager& operator=(const PhysicsManager&) = delete;
 

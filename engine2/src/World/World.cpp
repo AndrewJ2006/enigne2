@@ -8,6 +8,7 @@
 #include "Shader/Shader.h"
 #include "Types/Mesh.h"
 #include <memory>
+#include "PhysicsManager.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
@@ -18,6 +19,9 @@ World::World() {}
 World::~World() {}
 
 void World::Init() {
+    // Initialize PhysX system first
+    PhysicsManager::Get().Init();
+
     nlohmann::json json = JSONLoader::LoadFromFile("StartHouse.json");
 
     // Parse door info first
@@ -25,7 +29,6 @@ void World::Init() {
 
     // Create Door objects and initialize them
     for (auto& doorInfo : doorInfos) {
-        // Make sure DoorCreateInfo has 'size' populated from JSON "Size"
         auto door = std::make_unique<Door>(doorInfo);
         door->Init();
         m_doors.push_back(std::move(door));
@@ -35,7 +38,7 @@ void World::Init() {
     std::vector<WallCreateInfo> wallInfos = JSONLoader::ParseWalls(json);
     for (const auto& wallInfo : wallInfos) {
         auto wall = std::make_unique<Wall>(wallInfo);
-        wall->SetDoors(doorInfos);  // Pass door info for door cutting (optional)
+        wall->SetDoors(doorInfos);
         wall->Init();
         m_walls.push_back(std::move(wall));
     }
@@ -51,10 +54,14 @@ void World::Init() {
     std::cout << "World initialized from JSON\n";
 }
 
+
 void World::Update(float deltaTime) {
+    // Step PhysX simulation first
+    PhysicsManager::Get().Step(deltaTime);
+
     for (auto& wall : m_walls) wall->Update();
     for (auto& plane : m_planes) plane->Update();
-    for (auto& door : m_doors) door->Update();
+    for (auto& door : m_doors) door->Update(deltaTime);
 }
 
 void World::Draw() {
@@ -65,10 +72,10 @@ void World::Draw() {
 
     // Draw walls (light gray)
     for (const auto& wall : m_walls) {
-        glm::mat4 model = glm::mat4(1.0f); // Walls are defined in world space already
+        glm::mat4 model = glm::mat4(1.0f);
         shader->SetMat4("model", model);
         shader->SetBool("useTexture", false);
-        shader->SetVec3("uColor", glm::vec3(0.7f, 0.7f, 0.7f)); // Light gray walls
+        shader->SetVec3("uColor", glm::vec3(0.7f, 0.7f, 0.7f));
         if (wall->GetMesh()) wall->GetMesh()->Draw();
     }
 
@@ -77,18 +84,16 @@ void World::Draw() {
         glm::mat4 model = glm::mat4(1.0f);
         shader->SetMat4("model", model);
         shader->SetBool("useTexture", false);
-        shader->SetVec3("uColor", glm::vec3(0.4f, 0.4f, 0.4f)); // Dark gray planes
+        shader->SetVec3("uColor", glm::vec3(0.4f, 0.4f, 0.4f));
         if (plane->GetMesh()) plane->GetMesh()->Draw();
     }
 
     // Draw doors (brownish color)
-    // Door meshes are already transformed by position/rotation inside Door::Init(),
-    // so we can draw them with identity model matrix here.
     for (const auto& door : m_doors) {
-        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 model = door->GetModelMatrix();  // Use door's updated transform
         shader->SetMat4("model", model);
         shader->SetBool("useTexture", false);
-        shader->SetVec3("uColor", glm::vec3(0.55f, 0.27f, 0.07f)); // Brown door color
+        shader->SetVec3("uColor", glm::vec3(0.55f, 0.27f, 0.07f));
         if (door->GetMesh()) door->GetMesh()->Draw();
     }
 }
