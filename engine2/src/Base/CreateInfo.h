@@ -28,4 +28,5 @@ struct PlaneCreateInfo {
 struct DoorCreateInfo {
     glm::vec3 position;
     glm::vec3 rotation;
+    glm::vec3 size = glm::vec3(1.0f, 2.0f, 0.1f);  // Size: width, height, depth with default values
 };

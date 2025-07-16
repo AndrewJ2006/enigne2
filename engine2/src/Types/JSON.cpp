@@ -1,16 +1,14 @@
-
-// JSON.cpp
 #include "JSON.h"
 #include <fstream>
 #include <iostream>
-#include <algorithm> // for std::reverse
+#include <algorithm>
 #include <glm/glm.hpp>
 
 nlohmann::json JSONLoader::LoadFromFile(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Failed to open JSON file: " << filename << "\n";
-        return nlohmann::json{};  // return empty JSON object instead of nullptr
+        return nlohmann::json{};
     }
     nlohmann::json data;
     file >> data;
@@ -40,7 +38,6 @@ std::vector<WallCreateInfo> JSONLoader::ParseWalls(const nlohmann::json& json) {
             }
         }
 
-        // Reverse points order if requested (fix winding for correct normals and culling)
         if (wall.useReversePointOrder) {
             std::reverse(wall.points.begin(), wall.points.end());
         }
@@ -81,6 +78,14 @@ std::vector<DoorCreateInfo> JSONLoader::ParseDoors(const nlohmann::json& json) {
         DoorCreateInfo door;
         door.position = glm::vec3(d["Position"][0], d["Position"][1], d["Position"][2]);
         door.rotation = glm::vec3(d["Rotation"][0], d["Rotation"][1], d["Rotation"][2]);
+
+        if (d.contains("Size") && d["Size"].is_array() && d["Size"].size() == 3) {
+            door.size = glm::vec3(d["Size"][0], d["Size"][1], d["Size"][2]);
+        }
+        else {
+            door.size = glm::vec3(1.0f, 2.0f, 0.1f); // default size
+        }
+
         doors.push_back(door);
     }
 

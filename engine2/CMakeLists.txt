@@ -14,6 +14,7 @@
     src/Types/Wall.cpp
     src/Types/Door.cpp
     src/Types/JSON.cpp 
+    src/Physics/PhysicsManager.cpp
 
 )
 
@@ -33,6 +34,7 @@ target_include_directories(Main PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Types
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AssetManager
     ${CMAKE_CURRENT_SOURCE_DIR}/src/World
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Physics
 
 
     ${CMAKE_CURRENT_SOURCE_DIR}/res/Geometry

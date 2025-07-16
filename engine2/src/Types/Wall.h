@@ -1,11 +1,10 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <memory>
-#include <string>
-#include <vector>
 #include "CreateInfo.h"
 #include "Types/Mesh.h"
+#include <memory>
+#include <string>
+#include <vector> // for std::vector
 
 class Wall {
 public:
@@ -14,10 +13,10 @@ public:
     void Init();
     void Update();
 
-    const std::vector<glm::vec3>& GetPoints() const;
-    float GetHeight() const;
-    const std::string& GetMaterial() const;
     Mesh* GetMesh() const;
+
+    const std::string& GetMaterial() const;           // Declare GetMaterial
+    void SetDoors(const std::vector<DoorCreateInfo>& doors); // Declare SetDoors (optional)
 
 private:
     WallCreateInfo m_createInfo;

@@ -1,59 +1,64 @@
 #include "Door.h"
-#include "CreateInfo.h"
-#include "Types/Mesh.h"
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Door::Door(const DoorCreateInfo& createInfo)
-    : m_createInfo(createInfo) {
-}
+Door::Door(const DoorCreateInfo& createInfo) : m_createInfo(createInfo) {}
 
 void Door::Init() {
-    // Simple rectangle door at origin, size 1x2 units (width x height)
-    float width = 1.0f;
-    float height = 2.0f;
+    glm::vec3 size = m_createInfo.size;  // width, height, depth
+    glm::vec3 halfSize = size * 0.5f;
 
-    glm::vec3 normal(0.0f, 0.0f, 1.0f);
-    float offset = 0.01f; // Small offset to avoid z-fighting
+    // Define 8 corners of the rectangular prism door, centered around origin
+    glm::vec3 p000 = { -halfSize.x, 0.0f, -halfSize.z };
+    glm::vec3 p100 = { halfSize.x, 0.0f, -halfSize.z };
+    glm::vec3 p110 = { halfSize.x, size.y, -halfSize.z };
+    glm::vec3 p010 = { -halfSize.x, size.y, -halfSize.z };
+
+    glm::vec3 p001 = { -halfSize.x, 0.0f, halfSize.z };
+    glm::vec3 p101 = { halfSize.x, 0.0f, halfSize.z };
+    glm::vec3 p111 = { halfSize.x, size.y, halfSize.z };
+    glm::vec3 p011 = { -halfSize.x, size.y, halfSize.z };
 
     std::vector<Vertex> vertices = {
-        { glm::vec3(0, 0, offset), normal, glm::vec2(0, 0) },
-        { glm::vec3(width, 0, offset), normal, glm::vec2(1, 0) },
-        { glm::vec3(width, height, offset), normal, glm::vec2(1, 1) },
-        { glm::vec3(0, height, offset), normal, glm::vec2(0, 1) },
+        // Front (+Z)
+        {p001, {0, 0, 1}, {0, 0}}, {p101, {0, 0, 1}, {1, 0}}, {p111, {0, 0, 1}, {1, 1}}, {p011, {0, 0, 1}, {0, 1}},
+        // Back (-Z)
+        {p000, {0, 0, -1}, {0, 0}}, {p010, {0, 0, -1}, {1, 0}}, {p110, {0, 0, -1}, {1, 1}}, {p100, {0, 0, -1}, {0, 1}},
+        // Left (-X)
+        {p000, {-1, 0, 0}, {0, 0}}, {p001, {-1, 0, 0}, {1, 0}}, {p011, {-1, 0, 0}, {1, 1}}, {p010, {-1, 0, 0}, {0, 1}},
+        // Right (+X)
+        {p100, {1, 0, 0}, {0, 0}}, {p110, {1, 0, 0}, {1, 0}}, {p111, {1, 0, 0}, {1, 1}}, {p101, {1, 0, 0}, {0, 1}},
+        // Top (+Y)
+        {p010, {0, 1, 0}, {0, 0}}, {p011, {0, 1, 0}, {1, 0}}, {p111, {0, 1, 0}, {1, 1}}, {p110, {0, 1, 0}, {0, 1}},
+        // Bottom (-Y)
+        {p000, {0, -1, 0}, {0, 0}}, {p100, {0, -1, 0}, {1, 0}}, {p101, {0, -1, 0}, {1, 1}}, {p001, {0, -1, 0}, {0, 1}},
     };
 
-    // Front face indices (CCW winding)
-    std::vector<unsigned int> indices = { 0, 1, 2, 2, 3, 0 };
+    std::vector<unsigned int> indices;
+    for (unsigned int i = 0; i < 6; ++i) {
+        unsigned int base = i * 4;
+        indices.insert(indices.end(), {
+            base, base + 1, base + 2,
+            base + 2, base + 3, base
+        });
+    }
 
-    // Back face - flipped normal and reversed winding for double-sided
-    glm::vec3 flippedNormal = -normal;
-    unsigned int baseIndexBack = static_cast<unsigned int>(vertices.size());
+    // Transform (translation + rotation)
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_createInfo.position);
+    transform = glm::rotate(transform, glm::radians(m_createInfo.rotation.y), glm::vec3(0, 1, 0));
+    transform = glm::rotate(transform, glm::radians(m_createInfo.rotation.x), glm::vec3(1, 0, 0));
+    transform = glm::rotate(transform, glm::radians(m_createInfo.rotation.z), glm::vec3(0, 0, 1));
 
-    vertices.push_back({ glm::vec3(0, 0, offset), flippedNormal, glm::vec2(0, 0) });
-    vertices.push_back({ glm::vec3(0, height, offset), flippedNormal, glm::vec2(0, 1) });
-    vertices.push_back({ glm::vec3(width, height, offset), flippedNormal, glm::vec2(1, 1) });
-    vertices.push_back({ glm::vec3(width, 0, offset), flippedNormal, glm::vec2(1, 0) });
-
-    indices.push_back(baseIndexBack);
-    indices.push_back(baseIndexBack + 1);
-    indices.push_back(baseIndexBack + 2);
-    indices.push_back(baseIndexBack);
-    indices.push_back(baseIndexBack + 2);
-    indices.push_back(baseIndexBack + 3);
+    for (auto& v : vertices) {
+        glm::vec4 pos = transform * glm::vec4(v.position, 1.0f);
+        v.position = glm::vec3(pos);
+        // Rotate normals if you want proper lighting:
+        // v.normal = glm::mat3(transform) * v.normal;
+    }
 
     m_mesh = std::make_unique<Mesh>(vertices, indices);
 }
 
 void Door::Update() {}
-
-glm::vec3 Door::GetPosition() const {
-    return m_createInfo.position;
-}
-
-glm::vec3 Door::GetRotation() const {
-    return m_createInfo.rotation;
-}
 
 Mesh* Door::GetMesh() const {
     return m_mesh.get();

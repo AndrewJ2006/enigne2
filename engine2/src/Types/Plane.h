@@ -1,23 +1,16 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <memory>
-#include <string>
 #include "CreateInfo.h"
 #include "Types/Mesh.h"
+#include <memory>
 
 class Plane {
 public:
-    explicit Plane(const PlaneCreateInfo& createInfo);
+    Plane(const PlaneCreateInfo& createInfo);
 
     void Init();
     void Update();
 
-    glm::vec3 GetP0() const;
-    glm::vec3 GetP1() const;
-    glm::vec3 GetP2() const;
-    glm::vec3 GetP3() const;
-    const std::string& GetMaterial() const;
     Mesh* GetMesh() const;
 
 private:

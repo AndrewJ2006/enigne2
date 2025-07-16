@@ -1,49 +1,37 @@
 #include "Plane.h"
-#include <vector>
-#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-Plane::Plane(const PlaneCreateInfo& createInfo)
-    : m_createInfo(createInfo) {
-}
+Plane::Plane(const PlaneCreateInfo& createInfo) : m_createInfo(createInfo) {}
 
 void Plane::Init() {
-    glm::vec3 edge1 = m_createInfo.p1 - m_createInfo.p0;
-    glm::vec3 edge2 = m_createInfo.p2 - m_createInfo.p0;
-    glm::vec3 normal = glm::normalize(glm::cross(edge1, edge2));
+    glm::vec3 normal(0, 1, 0);
 
+    // Front face (normal up)
     std::vector<Vertex> vertices = {
         { m_createInfo.p0, normal, glm::vec2(0.0f, 0.0f) },
         { m_createInfo.p1, normal, glm::vec2(1.0f, 0.0f) },
         { m_createInfo.p2, normal, glm::vec2(1.0f, 1.0f) },
-        { m_createInfo.p3, normal, glm::vec2(0.0f, 1.0f) },
+        { m_createInfo.p3, normal, glm::vec2(0.0f, 1.0f) }
     };
 
-    std::vector<unsigned int> indices = { 0, 1, 2, 2, 3, 0 };
+    // Back face (normal down, reverse winding order)
+    vertices.insert(vertices.end(), {
+        { m_createInfo.p0, -normal, glm::vec2(0.0f, 0.0f) },
+        { m_createInfo.p3, -normal, glm::vec2(1.0f, 0.0f) },
+        { m_createInfo.p2, -normal, glm::vec2(1.0f, 1.0f) },
+        { m_createInfo.p1, -normal, glm::vec2(0.0f, 1.0f) }
+        });
 
-    // back face
-    glm::vec3 flippedNormal = -normal;
-    unsigned int baseIndexBack = static_cast<unsigned int>(vertices.size());
-
-    vertices.push_back({ m_createInfo.p0, flippedNormal, glm::vec2(0.0f, 0.0f) });
-    vertices.push_back({ m_createInfo.p3, flippedNormal, glm::vec2(0.0f, 1.0f) });
-    vertices.push_back({ m_createInfo.p2, flippedNormal, glm::vec2(1.0f, 1.0f) });
-    vertices.push_back({ m_createInfo.p1, flippedNormal, glm::vec2(1.0f, 0.0f) });
-
-    indices.push_back(baseIndexBack);
-    indices.push_back(baseIndexBack + 1);
-    indices.push_back(baseIndexBack + 2);
-    indices.push_back(baseIndexBack);
-    indices.push_back(baseIndexBack + 2);
-    indices.push_back(baseIndexBack + 3);
+    std::vector<unsigned int> indices = {
+        0, 1, 2,   2, 3, 0,       // front face
+        4, 5, 6,   6, 7, 4        // back face
+    };
 
     m_mesh = std::make_unique<Mesh>(vertices, indices);
 }
 
 void Plane::Update() {}
 
-glm::vec3 Plane::GetP0() const { return m_createInfo.p0; }
-glm::vec3 Plane::GetP1() const { return m_createInfo.p1; }
-glm::vec3 Plane::GetP2() const { return m_createInfo.p2; }
-glm::vec3 Plane::GetP3() const { return m_createInfo.p3; }
-const std::string& Plane::GetMaterial() const { return m_createInfo.material; }
-Mesh* Plane::GetMesh() const { return m_mesh.get(); }
+Mesh* Plane::GetMesh() const {
+    return m_mesh.get();
+}
