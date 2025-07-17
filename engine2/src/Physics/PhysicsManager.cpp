@@ -1,8 +1,11 @@
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "PhysicsManager.h"
-#include <iostream>
+
+#include <iostream> // For std::cerr, std::endl
 #include <PxControllerManager.h>
-
-
 
 using namespace physx;
 
@@ -95,7 +98,61 @@ void PhysicsManager::Cleanup() {
     }
 }
 
-PxPhysics* PhysicsManager::GetPhysics() const { return m_physics; }
-PxScene* PhysicsManager::GetScene() const { return m_scene; }
-PxMaterial* PhysicsManager::GetMaterial() const { return m_material; }
-PxControllerManager* PhysicsManager::GetControllerManager() const { return m_controllerManager; }
+PxRigidDynamic* PhysicsManager::CreateDynamicBox(const glm::vec3& position, const glm::vec3& size, float mass) {
+    if (!m_physics || !m_scene || !m_material) {
+        std::cerr << "PhysicsManager not initialized properly." << std::endl;
+        return nullptr;
+    }
+
+    PxTransform transform(PxVec3(position.x, position.y, position.z));
+    PxBoxGeometry geometry(PxVec3(size.x * 0.5f, size.y * 0.5f, size.z * 0.5f));
+
+    PxRigidDynamic* body = PxCreateDynamic(*m_physics, transform, geometry, *m_material, mass);
+    if (!body) {
+        std::cerr << "Failed to create dynamic box!" << std::endl;
+        return nullptr;
+    }
+
+    m_scene->addActor(*body);
+    return body;
+}
+
+PxRigidStatic* PhysicsManager::CreateStaticBox(const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation) {
+    if (!m_physics || !m_scene || !m_material) {
+        std::cerr << "PhysicsManager not initialized properly." << std::endl;
+        return nullptr;
+    }
+
+    glm::quat rotQuat = glm::quat(glm::radians(rotation));
+
+    PxTransform transform(
+        PxVec3(position.x, position.y, position.z),
+        PxQuat(rotQuat.x, rotQuat.y, rotQuat.z, rotQuat.w)
+    );
+
+    PxBoxGeometry boxGeom(size.x * 0.5f, size.y * 0.5f, size.z * 0.5f);
+
+    PxRigidStatic* staticBox = m_physics->createRigidStatic(transform);
+    if (!staticBox) {
+        std::cerr << "Failed to create PxRigidStatic!" << std::endl;
+        return nullptr;
+    }
+
+    PxShape* shape = m_physics->createShape(boxGeom, *m_material);
+    if (!shape) {
+        std::cerr << "Failed to create PxShape!" << std::endl;
+        staticBox->release();
+        return nullptr;
+    }
+
+    staticBox->attachShape(*shape);
+    shape->release();
+
+    m_scene->addActor(*staticBox);
+    return staticBox;
+}
+
+physx::PxPhysics* PhysicsManager::GetPhysics() const { return m_physics; }
+physx::PxScene* PhysicsManager::GetScene() const { return m_scene; }
+physx::PxMaterial* PhysicsManager::GetMaterial() const { return m_material; }
+physx::PxControllerManager* PhysicsManager::GetControllerManager() const { return m_controllerManager; }

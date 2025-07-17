@@ -16,7 +16,6 @@ bool RaycastingPx::Raycast(
     if (!m_scene)
         return false;
 
-    // Perform the raycast: true means we want any hit, closest hit will be stored in hitBuffer
     bool status = m_scene->raycast(
         origin,
         direction.getNormalized(),

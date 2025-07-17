@@ -18,9 +18,8 @@ void Player::Update(float deltaTime) {
     m_physics.Update(deltaTime);
 }
 
-// NOTE: Move now takes only one argument (direction vector)
 void Player::Move(const PxVec3& direction) {
-    m_physics.Move(direction);
+    m_physics.Move(direction); // ? now correctly calling with one argument
 }
 
 void Player::Jump() {

@@ -1,4 +1,6 @@
 #pragma once
+
+#include <glm/glm.hpp>
 #include <PxPhysicsAPI.h>
 
 class PhysicsManager {
@@ -12,6 +14,11 @@ public:
     physx::PxPhysics* GetPhysics() const;
     physx::PxScene* GetScene() const;
     physx::PxMaterial* GetMaterial() const;
+
+    physx::PxRigidDynamic* CreateDynamicBox(const glm::vec3& position, const glm::vec3& size, float mass);
+
+    physx::PxRigidStatic* CreateStaticBox(const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation);
+
     physx::PxControllerManager* GetControllerManager() const;
 
 private:
@@ -25,5 +32,5 @@ private:
     physx::PxDefaultCpuDispatcher* m_dispatcher = nullptr;
     physx::PxScene* m_scene = nullptr;
     physx::PxMaterial* m_material = nullptr;
-    physx::PxControllerManager* m_controllerManager = nullptr;  // << Add this!
+    physx::PxControllerManager* m_controllerManager = nullptr;
 };

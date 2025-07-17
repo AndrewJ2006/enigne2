@@ -15,6 +15,9 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
+// Declare the external global vector of Door pointers
+extern std::vector<Door*> g_Doors;
+
 World::World() {}
 
 World::~World() {}
@@ -23,7 +26,7 @@ void World::Init() {
     // Initialize PhysX system first
     PhysicsManager::Get().Init();
 
-    // Add static floor once
+    // Create static floor (make static or fix call)
     ScenePx::CreateStaticFloor();
 
     nlohmann::json json = JSONLoader::LoadFromFile("StartHouse.json");
@@ -31,10 +34,15 @@ void World::Init() {
     // Parse door info first
     std::vector<DoorCreateInfo> doorInfos = JSONLoader::ParseDoors(json);
 
-    // Create Door objects and initialize them
+    // Create Door objects, initialize them, and add to global door vector
     for (auto& doorInfo : doorInfos) {
         auto door = std::make_unique<Door>(doorInfo);
         door->Init();
+
+        // Add raw pointer to global vector for raycast interaction
+        g_Doors.push_back(door.get());
+
+        // Store unique_ptr locally to manage lifetime
         m_doors.push_back(std::move(door));
     }
 

@@ -2,13 +2,15 @@
 #include "Backend.h"
 #include "PhysicsManager.h"
 #include "RaycastingPx.h"
+#include "Door.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/common.hpp>
-
 #include <PxPhysicsAPI.h>
 #include <stdexcept>
 
 using namespace physx;
+
+extern std::vector<Door*> g_Doors;
 
 PlayerCamera::PlayerCamera()
     : Camera(glm::vec3(0.0f, 1.75f, 0.0f),
@@ -28,48 +30,68 @@ bool PlayerCamera::InitPhysics() {
 }
 
 void PlayerCamera::Update(float deltaX, float deltaY, float deltaTime) {
-    // Update camera rotation with mouse input
+    // Update camera rotation based on mouse movement
     Yaw += deltaX * m_mouseSensitivity;
     Pitch += deltaY * m_mouseSensitivity;
     Pitch = glm::clamp(Pitch, -89.0f, 89.0f);
     updateCameraVectors();
 
     PxController* controller = m_physics.GetController();
-    if (!controller) {
-        throw std::runtime_error("PlayerPhysics controller is null");
-    }
+    if (!controller) throw std::runtime_error("PlayerPhysics controller is null");
 
+    // Handle player movement input
     PxVec3 movement(0.0f);
-
-    if (Backend::IsKeyPressed(GLFW_KEY_W))
-        movement += PxVec3(Front.x, 0.0f, Front.z);
-    if (Backend::IsKeyPressed(GLFW_KEY_S))
-        movement -= PxVec3(Front.x, 0.0f, Front.z);
-    if (Backend::IsKeyPressed(GLFW_KEY_A))
-        movement -= PxVec3(Right.x, 0.0f, Right.z);
-    if (Backend::IsKeyPressed(GLFW_KEY_D))
-        movement += PxVec3(Right.x, 0.0f, Right.z);
+    if (Backend::IsKeyPressed(GLFW_KEY_W)) movement += PxVec3(Front.x, 0.0f, Front.z);
+    if (Backend::IsKeyPressed(GLFW_KEY_S)) movement -= PxVec3(Front.x, 0.0f, Front.z);
+    if (Backend::IsKeyPressed(GLFW_KEY_A)) movement -= PxVec3(Right.x, 0.0f, Right.z);
+    if (Backend::IsKeyPressed(GLFW_KEY_D)) movement += PxVec3(Right.x, 0.0f, Right.z);
 
     if (movement.magnitudeSquared() > 0.01f)
         movement = movement.getNormalized();
 
-    m_physics.Move(movement);
+    // Apply movement speed scaled by deltaTime to control frame rate dependency
+    PxVec3 moveWithSpeed = movement * m_moveSpeed * deltaTime;
+    m_physics.Move(moveWithSpeed);
 
-    // Jump input detection and ground check
+    // Jump input handling
     bool jumpPressed = Backend::IsKeyPressed(GLFW_KEY_SPACE);
-    bool onGround = m_physics.IsOnGround();
-
-    if (jumpPressed && !m_jumpPressedLastFrame && onGround) {
+    if (jumpPressed && !m_jumpPressedLastFrame && m_physics.IsOnGround()) {
         m_physics.Jump();
     }
     m_jumpPressedLastFrame = jumpPressed;
 
+    // Door interaction
+    static bool ePressedLastFrame = false;
+    bool ePressed = Backend::IsKeyPressed(GLFW_KEY_E);
+
+    if (ePressed && !ePressedLastFrame) {
+        PxScene* scene = PhysicsManager::Get().GetScene();
+        RaycastingPx raycaster(scene);
+
+        PxVec3 origin(Position.x, Position.y + 1.75f, Position.z);
+        glm::vec3 frontNorm = glm::normalize(Front);
+        PxVec3 direction(frontNorm.x, frontNorm.y, frontNorm.z);
+
+        PxRaycastBuffer hitBuffer;
+        float maxDistance = 3.5f;
+
+        if (raycaster.Raycast(origin, direction, maxDistance, hitBuffer)) {
+            physx::PxActor* hitActor = hitBuffer.block.actor;
+            for (Door* door : g_Doors) {
+                if (door->GetRigidActor() == hitActor) {
+                    door->ToggleOpenClose();
+                    break;
+                }
+            }
+        }
+    }
+    ePressedLastFrame = ePressed;
+
+    // Update physics state
     m_physics.Update(deltaTime);
 
-    // Sync camera position with physics controller, convert PxExtendedVec3 to PxVec3
     PxExtendedVec3 extendedPos = controller->getPosition();
-    Position = glm::vec3(
-        static_cast<float>(extendedPos.x),
+    Position = glm::vec3(static_cast<float>(extendedPos.x),
         static_cast<float>(extendedPos.y),
         static_cast<float>(extendedPos.z));
 }
