@@ -1,5 +1,8 @@
 #include "PhysicsManager.h"
 #include <iostream>
+#include <PxControllerManager.h>
+
+
 
 using namespace physx;
 
@@ -42,13 +45,18 @@ void PhysicsManager::Init() {
         return;
     }
 
+    m_controllerManager = PxCreateControllerManager(*m_scene);
+    if (!m_controllerManager) {
+        std::cerr << "PxCreateControllerManager failed!" << std::endl;
+        return;
+    }
+
     m_material = m_physics->createMaterial(0.5f, 0.5f, 0.6f);
     if (!m_material) {
         std::cerr << "createMaterial failed!" << std::endl;
         return;
     }
 
-    // ** Add ground plane here **
     PxRigidStatic* groundPlane = PxCreatePlane(*m_physics, PxPlane(0, 1, 0, 0), *m_material);
     if (!groundPlane) {
         std::cerr << "Failed to create ground plane!" << std::endl;
@@ -56,7 +64,6 @@ void PhysicsManager::Init() {
     }
     m_scene->addActor(*groundPlane);
 }
-
 
 void PhysicsManager::Step(float deltaTime) {
     if (m_scene) {
@@ -69,6 +76,10 @@ void PhysicsManager::Cleanup() {
     if (m_scene) {
         m_scene->release();
         m_scene = nullptr;
+    }
+    if (m_controllerManager) {
+        m_controllerManager->release();
+        m_controllerManager = nullptr;
     }
     if (m_dispatcher) {
         m_dispatcher->release();
@@ -84,16 +95,7 @@ void PhysicsManager::Cleanup() {
     }
 }
 
-// *** Add the missing getter definitions here ***
-
-physx::PxPhysics* PhysicsManager::GetPhysics() const {
-    return m_physics;
-}
-
-physx::PxScene* PhysicsManager::GetScene() const {
-    return m_scene;
-}
-
-physx::PxMaterial* PhysicsManager::GetMaterial() const {
-    return m_material;
-}
+PxPhysics* PhysicsManager::GetPhysics() const { return m_physics; }
+PxScene* PhysicsManager::GetScene() const { return m_scene; }
+PxMaterial* PhysicsManager::GetMaterial() const { return m_material; }
+PxControllerManager* PhysicsManager::GetControllerManager() const { return m_controllerManager; }

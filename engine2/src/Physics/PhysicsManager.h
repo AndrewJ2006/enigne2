@@ -12,6 +12,7 @@ public:
     physx::PxPhysics* GetPhysics() const;
     physx::PxScene* GetScene() const;
     physx::PxMaterial* GetMaterial() const;
+    physx::PxControllerManager* GetControllerManager() const;
 
 private:
     PhysicsManager() = default;
@@ -24,4 +25,5 @@ private:
     physx::PxDefaultCpuDispatcher* m_dispatcher = nullptr;
     physx::PxScene* m_scene = nullptr;
     physx::PxMaterial* m_material = nullptr;
+    physx::PxControllerManager* m_controllerManager = nullptr;  // << Add this!
 };

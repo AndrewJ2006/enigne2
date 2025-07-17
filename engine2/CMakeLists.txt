@@ -14,7 +14,15 @@
     src/Types/Wall.cpp
     src/Types/Door.cpp
     src/Types/JSON.cpp 
+    
+    src/Player/Player.cpp
+    src/Player/PlayerCamera.cpp
+
+    src/Physics/ScenePx.cpp
     src/Physics/PhysicsManager.cpp
+    src/Physics/PlayerPx.cpp
+    src/Physics/RaycastingPx.cpp
+
 
 )
 
@@ -35,11 +43,28 @@ target_include_directories(Main PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AssetManager
     ${CMAKE_CURRENT_SOURCE_DIR}/src/World
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Physics
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Player
 
 
     ${CMAKE_CURRENT_SOURCE_DIR}/res/Geometry
 
     ${CMAKE_CURRENT_SOURCE_DIR}/res/Shader
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include/characterkinematic
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include/collision
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include/common
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include/cooking
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include/cudamanger
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include/extensions
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include/filebuf
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include/foundation
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include/geometry
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include/geomutils
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include/gpu
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include/vehicle2
+
+
 
 )
 
@@ -76,29 +101,28 @@ add_subdirectory(libs/nlohmann_json)
 
 # Physx
 
-target_compile_definitions(Main PRIVATE 
-    $<$<CONFIG:Debug>:_DEBUG>
-    $<$<CONFIG:Release>:NDEBUG>
-)
-
+# Include PhysX headers
 target_include_directories(Main SYSTEM PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include
 )
 
+# Paths
 set(PHYSX_LIB_BASE ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/lib)
 set(PHYSX_DLL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/DLL)
-
 set(PHYSX_LIB_DIR $<$<CONFIG:Debug>:${PHYSX_LIB_BASE}/debug>$<$<NOT:$<CONFIG:Debug>>:${PHYSX_LIB_BASE}/release>)
 
+# Link PhysX libraries (character kinematic lib moved up in order)
 target_link_libraries(Main PRIVATE
-    "${PHYSX_LIB_DIR}/PhysX_64.lib"
-    "${PHYSX_LIB_DIR}/PhysXCommon_64.lib"
     "${PHYSX_LIB_DIR}/PhysXFoundation_64.lib"
-    "${PHYSX_LIB_DIR}/PhysXCooking_64.lib"
+    "${PHYSX_LIB_DIR}/PhysXCommon_64.lib"
+    "${PHYSX_LIB_DIR}/PhysX_64.lib"
+    "${PHYSX_LIB_DIR}/PhysXCharacterKinematic_static_64.lib"  # Must link this BEFORE Extensions, Cooking, PVD, etc.
     "${PHYSX_LIB_DIR}/PhysXExtensions_static_64.lib"
+    "${PHYSX_LIB_DIR}/PhysXCooking_64.lib"
     "${PHYSX_LIB_DIR}/PhysXPvdSDK_static_64.lib"
 )
 
+# Copy PhysX DLLs after build
 file(GLOB PHYSX_DLLS "${PHYSX_DLL_DIR}/*.dll")
 foreach(dll ${PHYSX_DLLS})
     add_custom_command(TARGET Main POST_BUILD

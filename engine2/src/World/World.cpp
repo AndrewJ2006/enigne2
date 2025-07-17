@@ -7,9 +7,10 @@
 #include "JSON.h"
 #include "Shader/Shader.h"
 #include "Types/Mesh.h"
-#include <memory>
 #include "PhysicsManager.h"
+#include "ScenePx.h"
 
+#include <memory>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -21,6 +22,9 @@ World::~World() {}
 void World::Init() {
     // Initialize PhysX system first
     PhysicsManager::Get().Init();
+
+    // Add static floor once
+    ScenePx::CreateStaticFloor();
 
     nlohmann::json json = JSONLoader::LoadFromFile("StartHouse.json");
 
@@ -54,9 +58,8 @@ void World::Init() {
     std::cout << "World initialized from JSON\n";
 }
 
-
 void World::Update(float deltaTime) {
-    // Step PhysX simulation first
+    // Step PhysX simulation
     PhysicsManager::Get().Step(deltaTime);
 
     for (auto& wall : m_walls) wall->Update();
@@ -90,7 +93,7 @@ void World::Draw() {
 
     // Draw doors (brownish color)
     for (const auto& door : m_doors) {
-        glm::mat4 model = door->GetModelMatrix();  // Use door's updated transform
+        glm::mat4 model = door->GetModelMatrix();
         shader->SetMat4("model", model);
         shader->SetBool("useTexture", false);
         shader->SetVec3("uColor", glm::vec3(0.55f, 0.27f, 0.07f));
