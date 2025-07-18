@@ -4,8 +4,7 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-// Forward declarations of new subsystems
-class ColliderPx;
+// Forward declarations for subsystems
 class CollisionsPx;
 class DebugPx;
 
@@ -25,7 +24,7 @@ public:
     physx::PxMaterial* GetMaterial() const;
     physx::PxControllerManager* GetControllerManager() const;
 
-    // Accessors for new systems
+    // Accessors for new subsystems
     CollisionsPx* GetCollisionSystem() const { return m_collisions.get(); }
     DebugPx* GetDebugSystem() const { return m_debug.get(); }
 

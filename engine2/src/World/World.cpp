@@ -14,6 +14,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include <algorithm> // for std::find
 
 // Declare the external global vector of Door pointers
 extern std::vector<Door*> g_Doors;
@@ -26,9 +27,10 @@ void World::Init() {
     // Initialize PhysX system first
     PhysicsManager::Get().Init();
 
-    // Create static floor (make static or fix call)
+    // Create static floor
     ScenePx::CreateStaticFloor();
 
+    // Load JSON file describing the world
     nlohmann::json json = JSONLoader::LoadFromFile("StartHouse.json");
 
     // Parse door info first
@@ -39,8 +41,10 @@ void World::Init() {
         auto door = std::make_unique<Door>(doorInfo);
         door->Init();
 
-        // Add raw pointer to global vector for raycast interaction
-        g_Doors.push_back(door.get());
+        // Add raw pointer to global vector for raycast interaction (avoid duplicates)
+        if (std::find(g_Doors.begin(), g_Doors.end(), door.get()) == g_Doors.end()) {
+            g_Doors.push_back(door.get());
+        }
 
         // Store unique_ptr locally to manage lifetime
         m_doors.push_back(std::move(door));
@@ -67,11 +71,14 @@ void World::Init() {
 }
 
 void World::Update(float deltaTime) {
-    // Step PhysX simulation
+    // Step PhysX simulation first, so raycasts hit up-to-date actors
     PhysicsManager::Get().Step(deltaTime);
 
+    // Update walls and planes (likely static but update anyway)
     for (auto& wall : m_walls) wall->Update();
     for (auto& plane : m_planes) plane->Update();
+
+    // Update doors (includes kinematic motion updates)
     for (auto& door : m_doors) door->Update(deltaTime);
 }
 

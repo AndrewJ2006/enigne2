@@ -1,12 +1,12 @@
 #include "PlayerCamera.h"
 #include "Backend.h"
-#include "ManagerPx.h"
-#include "RaycastingPx.h"
 #include "Door.h"
+#include "ManagerPx.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/common.hpp>
 #include <PxPhysicsAPI.h>
 #include <stdexcept>
+#include <vector>
 
 using namespace physx;
 
@@ -17,29 +17,75 @@ PlayerCamera::PlayerCamera()
         glm::vec3(0.0f, 1.0f, 0.0f),
         -90.0f,
         0.0f),
-    m_raycast(PhysicsManager::Get().GetScene()),
-    m_jumpPressedLastFrame(false)
-{
+    m_jumpPressedLastFrame(false),
+    m_mouseSensitivity(0.1f),
+    m_collisionsEnabled(true) {
+    m_scene = PhysicsManager::Get().GetScene();
 }
 
+PlayerCamera::~PlayerCamera() = default;
+
 bool PlayerCamera::InitPhysics() {
-    if (!m_physics.Init(PxVec3(0.0f, 1.75f, 0.0f))) {
+    if (!m_player.Init(PxVec3(0.0f, 1.75f, 0.0f))) {
         throw std::runtime_error("Failed to initialize PlayerPhysics");
     }
+    m_player.SetSpeed(5.0f);
     return true;
 }
 
-void PlayerCamera::Update(float deltaX, float deltaY, float deltaTime) {
-    // Update camera rotation based on mouse movement
+void PlayerCamera::DisableCollisions() {
+    PxController* controller = m_player.GetController();
+    if (!controller) return;
+
+    PxRigidActor* actor = controller->getActor();
+    if (!actor) return;
+
+    PxU32 nbShapes = actor->getNbShapes();
+    if (nbShapes == 0) return;
+
+    std::vector<PxShape*> shapes(nbShapes);
+    actor->getShapes(shapes.data(), nbShapes);
+
+    for (PxShape* shape : shapes) {
+        shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+        shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
+    }
+}
+
+void PlayerCamera::EnableCollisions() {
+    PxController* controller = m_player.GetController();
+    if (!controller) return;
+
+    PxRigidActor* actor = controller->getActor();
+    if (!actor) return;
+
+    PxU32 nbShapes = actor->getNbShapes();
+    if (nbShapes == 0) return;
+
+    std::vector<PxShape*> shapes(nbShapes);
+    actor->getShapes(shapes.data(), nbShapes);
+
+    for (PxShape* shape : shapes) {
+        shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, true);
+        shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+    }
+}
+
+void PlayerCamera::Update(float deltaX, float deltaY, float deltaTime,
+    const glm::vec3& rayOriginOverride,
+    const glm::vec3& rayDirectionOverride) {
+    // Update camera orientation from mouse movement
     Yaw += deltaX * m_mouseSensitivity;
     Pitch += deltaY * m_mouseSensitivity;
     Pitch = glm::clamp(Pitch, -89.0f, 89.0f);
     updateCameraVectors();
 
-    PxController* controller = m_physics.GetController();
-    if (!controller) throw std::runtime_error("PlayerPhysics controller is null");
+    PxController* controller = m_player.GetController();
+    if (!controller) {
+        throw std::runtime_error("Player controller is null");
+    }
 
-    // Handle player movement input
+    // Process keyboard movement
     PxVec3 movement(0.0f);
     if (Backend::IsKeyPressed(GLFW_KEY_W)) movement += PxVec3(Front.x, 0.0f, Front.z);
     if (Backend::IsKeyPressed(GLFW_KEY_S)) movement -= PxVec3(Front.x, 0.0f, Front.z);
@@ -49,49 +95,91 @@ void PlayerCamera::Update(float deltaX, float deltaY, float deltaTime) {
     if (movement.magnitudeSquared() > 0.01f)
         movement = movement.getNormalized();
 
-    // Apply movement speed scaled by deltaTime to control frame rate dependency
-    PxVec3 moveWithSpeed = movement * m_moveSpeed * deltaTime;
-    m_physics.Move(moveWithSpeed);
+    m_player.Move(movement);
 
-    // Jump input handling
+    // Handle jump input
     bool jumpPressed = Backend::IsKeyPressed(GLFW_KEY_SPACE);
-    if (jumpPressed && !m_jumpPressedLastFrame && m_physics.IsOnGround()) {
-        m_physics.Jump();
+    if (jumpPressed && !m_jumpPressedLastFrame && m_player.IsOnGround()) {
+        m_player.Jump();
     }
     m_jumpPressedLastFrame = jumpPressed;
 
-    // Door interaction
-    static bool ePressedLastFrame = false;
-    bool ePressed = Backend::IsKeyPressed(GLFW_KEY_E);
+    // Handle interaction and toggle collisions on F press
+    static bool fPressedLastFrame = false;
+    bool fPressed = Backend::IsKeyPressed(GLFW_KEY_F);
 
-    if (ePressed && !ePressedLastFrame) {
-        PxScene* scene = PhysicsManager::Get().GetScene();
-        RaycastingPx raycaster(scene);
+    if (fPressed && !fPressedLastFrame) {
+        // Toggle collisions ON/OFF
+        if (m_collisionsEnabled) {
+            DisableCollisions();
+            m_collisionsEnabled = false;
+        }
+        else {
+            EnableCollisions();
+            m_collisionsEnabled = true;
+        }
 
-        PxVec3 origin(Position.x, Position.y + 1.75f, Position.z);
-        glm::vec3 frontNorm = glm::normalize(Front);
-        PxVec3 direction(frontNorm.x, frontNorm.y, frontNorm.z);
+        // Raycast for door interaction
+        glm::vec3 rayOriginVec = (rayOriginOverride != glm::vec3(-1.0f))
+            ? rayOriginOverride
+            : glm::vec3(Position.x, Position.y + 1.5f, Position.z); // raise origin approx head height
 
-        PxRaycastBuffer hitBuffer;
-        float maxDistance = 3.5f;
+        glm::vec3 rayDirVec = (rayDirectionOverride != glm::vec3(-1.0f))
+            ? rayDirectionOverride
+            : glm::normalize(Front);
 
-        if (raycaster.Raycast(origin, direction, maxDistance, hitBuffer)) {
-            physx::PxActor* hitActor = hitBuffer.block.actor;
-            for (Door* door : g_Doors) {
-                if (door->GetRigidActor() == hitActor) {
-                    door->ToggleOpenClose();
-                    break;
+        const float originOffsetDistance = 0.3f; // offset forward so ray doesn't hit self
+        glm::vec3 adjustedOrigin = rayOriginVec + rayDirVec * originOffsetDistance;
+
+        PxVec3 origin(adjustedOrigin.x, adjustedOrigin.y, adjustedOrigin.z);
+        PxVec3 direction(rayDirVec.x, rayDirVec.y, rayDirVec.z);
+
+        PxRaycastBuffer hitBuffer(nullptr, 0); // Fix for PhysX ctor error
+
+        PxQueryFilterData filterData;
+        filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC;
+
+        bool hit = false;
+        if (m_scene) {
+            hit = m_scene->raycast(
+                origin,
+                direction,
+                3.5f, // max distance
+                hitBuffer,
+                PxHitFlag::eDEFAULT,
+                filterData);
+        }
+
+        if (hit && hitBuffer.hasBlock) {
+            PxActor* hitActor = hitBuffer.block.actor;
+            if (hitActor) {
+                for (Door* door : g_Doors) {
+                    if (door && door->GetRigidActor() == hitActor) {
+                        door->ToggleOpenClose();
+                        break;
+                    }
                 }
             }
         }
     }
-    ePressedLastFrame = ePressed;
+    fPressedLastFrame = fPressed;
 
-    // Update physics state
-    m_physics.Update(deltaTime);
+    // Sync camera with controller position
+    m_player.Update(deltaTime);
 
     PxExtendedVec3 extendedPos = controller->getPosition();
     Position = glm::vec3(static_cast<float>(extendedPos.x),
         static_cast<float>(extendedPos.y),
         static_cast<float>(extendedPos.z));
+}
+
+void PlayerCamera::updateCameraVectors() {
+    glm::vec3 front;
+    front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+    front.y = sin(glm::radians(Pitch));
+    front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+    Front = glm::normalize(front);
+
+    Right = glm::normalize(glm::cross(Front, WorldUp));
+    Up = glm::normalize(glm::cross(Right, Front));
 }

@@ -1,25 +1,22 @@
 #pragma once
+
 #include <PxPhysicsAPI.h>
 #include <glm/glm.hpp>
+#include <memory>
 
 class ColliderPx {
 public:
-    enum class Type {
-        Box,
-        Sphere,
-        Capsule
-        // Add more types as needed
-    };
+    // Constructor for static box collider
+    ColliderPx(const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation);
 
-    ColliderPx(physx::PxPhysics* physics, physx::PxRigidActor* actor);
     ~ColliderPx();
 
-    bool CreateBox(const glm::vec3& size, const glm::vec3& localPosition = glm::vec3(0));
-    bool CreateSphere(float radius, const glm::vec3& localPosition = glm::vec3(0));
-    bool CreateCapsule(float radius, float halfHeight, const glm::vec3& localPosition = glm::vec3(0));
+    // Get the underlying PhysX rigid static actor
+    physx::PxRigidStatic* GetRigidStatic() const;
+
+    // Optionally, update transform (if needed)
+    void SetTransform(const glm::vec3& position, const glm::vec3& rotation);
 
 private:
-    physx::PxPhysics* m_physics;
-    physx::PxRigidActor* m_actor;
-    physx::PxShape* m_shape;
+    physx::PxRigidStatic* m_rigidStatic = nullptr;
 };

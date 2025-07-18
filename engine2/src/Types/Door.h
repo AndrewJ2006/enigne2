@@ -2,10 +2,10 @@
 
 #include <glm/glm.hpp>
 #include <memory>
+#include <vector>
 #include <PxPhysicsAPI.h>
 #include "Mesh.h"
 #include "CreateInfo.h"
-#include <vector>
 
 class Door {
 public:
@@ -29,12 +29,12 @@ private:
 
     glm::mat4 m_modelMatrix{ 1.0f };
 
-    // Rotation state for smooth opening/closing
-    float m_currentAngle = 0.0f;      // current rotation angle in degrees
-    float m_targetAngle = 0.0f;       // target rotation angle in degrees
-    float m_rotationSpeed = 90.0f;    // degrees per second
+    // Animation state
+    float m_currentAngle = 0.0f;      // Current Y-axis rotation in degrees
+    float m_targetAngle = 0.0f;       // Target Y-axis rotation in degrees
+    float m_rotationSpeed = 90.0f;    // Degrees per second
     bool m_isOpen = false;
 };
 
-// Declare global door vector here (define in one .cpp)
+// Global door registry for raycasting
 extern std::vector<Door*> g_Doors;

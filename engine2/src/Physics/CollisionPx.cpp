@@ -3,11 +3,15 @@
 
 using namespace physx;
 
+// ----------------- CollisionEventCallback -----------------
+
 CollisionsPx::CollisionEventCallback::CollisionEventCallback(CollisionsPx* parent)
     : m_parent(parent) {
 }
 
-void CollisionsPx::CollisionEventCallback::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) {
+void CollisionsPx::CollisionEventCallback::onContact(const PxContactPairHeader& pairHeader,
+    const PxContactPair* pairs,
+    PxU32 nbPairs) {
     if (m_parent && m_parent->m_callback) {
         for (PxU32 i = 0; i < nbPairs; ++i) {
             m_parent->m_callback(pairs[i]);
@@ -16,32 +20,31 @@ void CollisionsPx::CollisionEventCallback::onContact(const PxContactPairHeader& 
 }
 
 void CollisionsPx::CollisionEventCallback::onTrigger(PxTriggerPair* pairs, PxU32 count) {
-    // No-op
+    // No operation
 }
 
 void CollisionsPx::CollisionEventCallback::onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) {
-    // No-op
+    // No operation
 }
 
 void CollisionsPx::CollisionEventCallback::onWake(PxActor** actors, PxU32 count) {
-    // No-op
+    // No operation
 }
 
 void CollisionsPx::CollisionEventCallback::onSleep(PxActor** actors, PxU32 count) {
-    // No-op
+    // No operation
 }
 
-void CollisionsPx::CollisionEventCallback::onAdvance(
-    const PxRigidBody* const* bodyBuffer,
+void CollisionsPx::CollisionEventCallback::onAdvance(const PxRigidBody* const* bodyBuffer,
     const PxTransform* poseBuffer,
-    const PxU32 count)
-{
-    // No-op (required override in PhysX 5)
+    PxU32 count) {
+    // No operation (required override in PhysX 5)
 }
+
+// ----------------- CollisionsPx -----------------
 
 CollisionsPx::CollisionsPx(PxScene* scene)
-    : m_scene(scene), m_callback(nullptr), m_eventCallback(nullptr)
-{
+    : m_scene(scene), m_callback(nullptr), m_eventCallback(nullptr) {
     if (m_scene) {
         m_eventCallback = new CollisionEventCallback(this);
         m_scene->setSimulationEventCallback(m_eventCallback);
@@ -56,9 +59,9 @@ CollisionsPx::~CollisionsPx() {
 }
 
 void CollisionsPx::SetCollisionCallback(CollisionCallback callback) {
-    m_callback = callback;
+    m_callback = std::move(callback);
 }
 
 void CollisionsPx::ProcessCollisions() {
-    // Optional: implement manual collision processing if needed
+    // Optional: implement if manual collision processing is required
 }

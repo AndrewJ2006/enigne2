@@ -7,6 +7,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 
+// Forward declaration
+class Door;
+
 // Camera movement options
 enum Camera_Movement {
     FORWARD,
@@ -45,9 +48,11 @@ public:
     void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
     void ProcessMouseScroll(float yoffset);
     void UpdateFromInput(float deltaTime);
+    void PerformRaycast();  // <-- NEW: Performs raycasting from camera
+
     void SetPosition(const glm::vec3& position) { Position = position; }
 
-protected: // <-- CHANGED from private to protected
+protected:
     // Camera attributes
     glm::vec3 Position;
     glm::vec3 Front;
@@ -64,7 +69,7 @@ protected: // <-- CHANGED from private to protected
     float MouseSensitivity;
     float Zoom;
 
-    void updateCameraVectors(); // <-- now accessible in PlayerCamera
+    void updateCameraVectors();
 };
 
 #endif // CAMERA_H

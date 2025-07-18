@@ -94,7 +94,7 @@ void PhysicsManager::Cleanup() {
         m_controllerManager = nullptr;
     }
     if (m_dispatcher) {
-        delete m_dispatcher;  // Proper cleanup for dispatcher
+        delete m_dispatcher;
         m_dispatcher = nullptr;
     }
     if (m_physics) {
