@@ -7,7 +7,7 @@
 #include "JSON.h"
 #include "Shader/Shader.h"
 #include "Types/Mesh.h"
-#include "PhysicsManager.h"
+#include "ManagerPx.h"
 #include "ScenePx.h"
 
 #include <memory>

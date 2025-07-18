@@ -1,5 +1,4 @@
 #include "RaycastingPx.h"
-
 using namespace physx;
 
 RaycastingPx::RaycastingPx(PxScene* scene)

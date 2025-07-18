@@ -1,24 +1,19 @@
-// ScenePx.cpp
-
 #include "ScenePx.h"
-#include "PhysicsManager.h"
+#include "ManagerPx.h"
 #include <iostream>
 #include <PxPhysicsAPI.h>
 
 using namespace physx;
 
 ScenePx::ScenePx() = default;
-
 ScenePx::~ScenePx() = default;
 
-bool ScenePx::Init()
-{
+bool ScenePx::Init() {
     CreateStaticFloor();
     return true;
 }
 
-void ScenePx::CreateStaticFloor()
-{
+void ScenePx::CreateStaticFloor() {
     PhysicsManager& physicsMgr = PhysicsManager::Get();
     PxPhysics* physics = physicsMgr.GetPhysics();
     PxScene* scene = physicsMgr.GetScene();
@@ -29,7 +24,6 @@ void ScenePx::CreateStaticFloor()
         return;
     }
 
-    // Create an infinite static plane at y = 0 with a normal facing up (0, 1, 0)
     PxRigidStatic* floorPlane = PxCreatePlane(*physics, PxPlane(0, 1, 0, 0), *material);
     if (!floorPlane) {
         std::cerr << "Failed to create PhysX floor plane" << std::endl;

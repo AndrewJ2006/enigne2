@@ -1,6 +1,6 @@
 #include "PlayerPx.h"
-#include "PhysicsManager.h"
-#include <iostream> // For std::cerr, std::endl
+#include "ManagerPx.h"
+#include <iostream>
 
 using namespace physx;
 
@@ -61,7 +61,6 @@ void PlayerPhysics::Move(const PxVec3& direction) {
 }
 
 void PlayerPhysics::Jump() {
-    // Can only jump if on ground and not already jumping
     if (!m_isJumping && IsOnGround()) {
         m_verticalVelocity = 7.0f;  // Jump impulse strength
         m_isJumping = true;
@@ -72,35 +71,28 @@ void PlayerPhysics::Update(float deltaTime) {
     if (!m_controller)
         return;
 
-    // Apply gravity when jumping or in air
     if (m_isJumping || !IsOnGround()) {
         m_verticalVelocity += gravity * deltaTime;
     }
     else {
-        // On ground and not jumping
         m_verticalVelocity = 0.0f;
     }
 
-    // Compose horizontal movement scaled by speed and deltaTime
     float horizontalSpeed = 5.0f;
     PxVec3 horizontalMove(
         m_pendingMovement.x * horizontalSpeed * deltaTime,
         0.0f,
         m_pendingMovement.z * horizontalSpeed * deltaTime);
 
-    // Vertical movement based on vertical velocity
     PxVec3 verticalMove(0.0f, m_verticalVelocity * deltaTime, 0.0f);
 
-    // Total movement vector
     PxVec3 totalMove = horizontalMove + verticalMove;
 
     PxControllerFilters filters;
     PxControllerCollisionFlags collisionFlags = m_controller->move(totalMove, 0.001f, deltaTime, filters);
 
-    // Reset horizontal movement accumulator
     m_pendingMovement = PxVec3(0.0f);
 
-    // Check if on ground by testing collision flags
     bool onGround = (static_cast<uint32_t>(collisionFlags) & static_cast<uint32_t>(PxControllerCollisionFlag::eCOLLISION_DOWN)) != 0;
 
     if (onGround) {

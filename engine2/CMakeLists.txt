@@ -18,8 +18,11 @@
     src/Player/Player.cpp
     src/Player/PlayerCamera.cpp
 
+    src/Physics/ColliderPx.cpp
+    src/Physics/CollisionPx.cpp
+    src/Physics/DebugPx.cpp
     src/Physics/ScenePx.cpp
-    src/Physics/PhysicsManager.cpp
+    src/Physics/ManagerPx.cpp
     src/Physics/PlayerPx.cpp
     src/Physics/RaycastingPx.cpp
 

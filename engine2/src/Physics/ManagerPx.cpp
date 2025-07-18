@@ -2,9 +2,11 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "PhysicsManager.h"
+#include "ManagerPx.h"
+#include "CollisionPx.h"
+#include "DebugPx.h"
 
-#include <iostream> // For std::cerr, std::endl
+#include <iostream>
 #include <PxControllerManager.h>
 
 using namespace physx;
@@ -66,6 +68,10 @@ void PhysicsManager::Init() {
         return;
     }
     m_scene->addActor(*groundPlane);
+
+    // Initialize Collisions and Debug subsystems
+    m_collisions = std::make_unique<CollisionsPx>(m_scene);
+    m_debug = std::make_unique<DebugPx>(m_scene);
 }
 
 void PhysicsManager::Step(float deltaTime) {
@@ -76,6 +82,9 @@ void PhysicsManager::Step(float deltaTime) {
 }
 
 void PhysicsManager::Cleanup() {
+    m_debug.reset();
+    m_collisions.reset();
+
     if (m_scene) {
         m_scene->release();
         m_scene = nullptr;
@@ -85,7 +94,7 @@ void PhysicsManager::Cleanup() {
         m_controllerManager = nullptr;
     }
     if (m_dispatcher) {
-        m_dispatcher->release();
+        delete m_dispatcher;  // Proper cleanup for dispatcher
         m_dispatcher = nullptr;
     }
     if (m_physics) {
@@ -152,7 +161,18 @@ PxRigidStatic* PhysicsManager::CreateStaticBox(const glm::vec3& position, const 
     return staticBox;
 }
 
-physx::PxPhysics* PhysicsManager::GetPhysics() const { return m_physics; }
-physx::PxScene* PhysicsManager::GetScene() const { return m_scene; }
-physx::PxMaterial* PhysicsManager::GetMaterial() const { return m_material; }
-physx::PxControllerManager* PhysicsManager::GetControllerManager() const { return m_controllerManager; }
+physx::PxPhysics* PhysicsManager::GetPhysics() const {
+    return m_physics;
+}
+
+physx::PxScene* PhysicsManager::GetScene() const {
+    return m_scene;
+}
+
+physx::PxMaterial* PhysicsManager::GetMaterial() const {
+    return m_material;
+}
+
+physx::PxControllerManager* PhysicsManager::GetControllerManager() const {
+    return m_controllerManager;
+}
