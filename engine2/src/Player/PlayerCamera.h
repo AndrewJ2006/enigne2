@@ -2,31 +2,24 @@
 
 #include "Camera.h"
 #include "PlayerPx.h"
-#include <PxPhysicsAPI.h>
-#include <glm/glm.hpp>
+#include "RaycastingPx.h"
+
+// Forward declaration to avoid include cycle
+class Door;
 
 class PlayerCamera : public Camera {
 public:
     PlayerCamera();
-    ~PlayerCamera();
 
     bool InitPhysics();
-
-    void Update(float deltaX, float deltaY, float deltaTime,
-        const glm::vec3& rayOriginOverride = glm::vec3(-1.0f),
-        const glm::vec3& rayDirectionOverride = glm::vec3(-1.0f));
-
-    void DisableCollisions();
-    void EnableCollisions();
+    void Update(float deltaX, float deltaY, float deltaTime);
 
 private:
-    void updateCameraVectors();
+    float m_mouseSensitivity = 0.1f;
+    float m_moveSpeed = 90.0f;
 
-    PlayerPhysics m_player;
-    physx::PxScene* m_scene = nullptr;
-    physx::PxRaycastBuffer m_raycast;
+    PlayerPhysics m_physics;
+    RaycastingPx m_raycast;
 
-    bool m_jumpPressedLastFrame;
-    bool m_collisionsEnabled;
-    float m_mouseSensitivity;
+    bool m_jumpPressedLastFrame = false;
 };
