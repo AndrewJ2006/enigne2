@@ -4,9 +4,8 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-// Forward declarations for subsystems
+// Forward declaration for the collision system
 class CollisionsPx;
-class DebugPx;
 
 class PhysicsManager {
 public:
@@ -24,15 +23,12 @@ public:
     physx::PxMaterial* GetMaterial() const;
     physx::PxControllerManager* GetControllerManager() const;
 
-    // Accessors for new subsystems
     CollisionsPx* GetCollisionSystem() const { return m_collisions.get(); }
-    DebugPx* GetDebugSystem() const { return m_debug.get(); }
 
 private:
     PhysicsManager() = default;
     ~PhysicsManager() = default;
 
-    // Non-copyable
     PhysicsManager(const PhysicsManager&) = delete;
     PhysicsManager& operator=(const PhysicsManager&) = delete;
 
@@ -44,5 +40,4 @@ private:
     physx::PxMaterial* m_material = nullptr;
 
     std::unique_ptr<CollisionsPx> m_collisions;
-    std::unique_ptr<DebugPx> m_debug;
 };

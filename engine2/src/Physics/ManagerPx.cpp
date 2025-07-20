@@ -4,7 +4,6 @@
 
 #include "ManagerPx.h"
 #include "CollisionPx.h"
-#include "DebugPx.h"
 
 #include <iostream>
 #include <PxControllerManager.h>
@@ -67,11 +66,11 @@ void PhysicsManager::Init() {
         std::cerr << "Failed to create ground plane!" << std::endl;
         return;
     }
+
     m_scene->addActor(*groundPlane);
 
-    // Initialize Collisions and Debug subsystems
+    // Initialize collisions only (no debug)
     m_collisions = std::make_unique<CollisionsPx>(m_scene);
-    m_debug = std::make_unique<DebugPx>(m_scene);
 }
 
 void PhysicsManager::Step(float deltaTime) {
@@ -82,7 +81,6 @@ void PhysicsManager::Step(float deltaTime) {
 }
 
 void PhysicsManager::Cleanup() {
-    m_debug.reset();
     m_collisions.reset();
 
     if (m_scene) {
@@ -133,7 +131,6 @@ PxRigidStatic* PhysicsManager::CreateStaticBox(const glm::vec3& position, const 
     }
 
     glm::quat rotQuat = glm::quat(glm::radians(rotation));
-
     PxTransform transform(
         PxVec3(position.x, position.y, position.z),
         PxQuat(rotQuat.x, rotQuat.y, rotQuat.z, rotQuat.w)

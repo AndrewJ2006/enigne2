@@ -20,7 +20,6 @@
 
     src/Physics/ColliderPx.cpp
     src/Physics/CollisionPx.cpp
-    src/Physics/DebugPx.cpp
     src/Physics/ScenePx.cpp
     src/Physics/ManagerPx.cpp
     src/Physics/PlayerPx.cpp
