@@ -2,14 +2,14 @@
 #include "AssetManager.h"
 #include "Renderer.h"
 #include "Backend.h"
-#include <stdexcept> // for std::runtime_error
+#include <stdexcept>
 
 Game::Game()
     : m_freeCamera(glm::vec3(0.0f, 5.0f, 5.0f),
         glm::vec3(0.0f, 1.0f, 0.0f),
         -90.0f,
         -20.0f),
-    m_cameraTogglePressed(false),  // Make sure this is initialized
+    m_cameraTogglePressed(false),
     m_activeCamera(nullptr)
 {
 }
@@ -19,29 +19,22 @@ void Game::Init() {
     Renderer::Init();
     m_world.Init();
 
-    // Initialize physics for player camera and throw on failure
     if (!m_playerCamera.InitPhysics()) {
         throw std::runtime_error("Failed to initialize PlayerCamera physics.");
     }
-
-    // Optional: Set player camera start position if needed
-    // m_playerCamera.SetPosition(glm::vec3(0.0f, 1.75f, 3.0f));
 
     m_activeCamera = &m_playerCamera;
 }
 
 void Game::Update(float deltaTime) {
-    float dx = 0.0f, dy = 0.0f;
-    Backend::GetMouseDelta(dx, dy);
-
-    // Handle camera toggle on 'C' key press with debounce
+    // Handle camera toggle with debounce on 'C' key
     if (Backend::IsKeyPressed(GLFW_KEY_C)) {
         if (!m_cameraTogglePressed) {
             if (m_activeCamera == &m_playerCamera) {
-                m_activeCamera = static_cast<Camera*>(&m_freeCamera);
+                m_activeCamera = &m_freeCamera;
             }
             else {
-                m_activeCamera = static_cast<Camera*>(&m_playerCamera);
+                m_activeCamera = &m_playerCamera;
             }
             m_cameraTogglePressed = true;
         }
@@ -50,29 +43,24 @@ void Game::Update(float deltaTime) {
         m_cameraTogglePressed = false;
     }
 
-    // Update active camera based on current mode
+    // Update active camera
     if (m_activeCamera == &m_playerCamera) {
-        m_playerCamera.Update(dx, dy, deltaTime);
+        m_playerCamera.Update(deltaTime);
     }
     else if (m_activeCamera == &m_freeCamera) {
-        m_freeCamera.UpdateFromInput(deltaTime);
+        m_freeCamera.Update(deltaTime);
     }
     else {
-        // Fallback if active camera is null (should not happen)
-        m_activeCamera = &m_playerCamera;
+        m_activeCamera = &m_playerCamera; // fallback safety
     }
 
     m_world.Update(deltaTime);
 }
 
 void Game::Render() {
+    if (!m_activeCamera) return;
+
     float aspect = Backend::GetAspectRatio();
-
-    if (!m_activeCamera) {
-        // Defensive fallback
-        return;
-    }
-
     glm::mat4 view = m_activeCamera->GetViewMatrix();
     glm::mat4 projection = m_activeCamera->GetProjectionMatrix(aspect);
 

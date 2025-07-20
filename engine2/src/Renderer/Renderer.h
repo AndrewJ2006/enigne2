@@ -5,18 +5,24 @@
 
 class Mesh;
 class Shader;
-class World; // Forward declaration
+class World;
 
 class Renderer {
 public:
+    // Initialize rendering resources (shaders, etc.)
     static bool Init();
-    static void DrawScene(const glm::mat4& view, const glm::mat4& projection, World& world); // ? Add World&
+
+    // Draw the given world scene with specified camera matrices
+    static void DrawScene(const glm::mat4& view, const glm::mat4& projection, World& world);
+
+    // Clean up all allocated resources
     static void Shutdown();
 
+    // Accessor to current shader (optional)
     static Shader* GetShader();
-    static Mesh* GetCubeMesh();
 
 private:
-    static std::unique_ptr<Mesh> s_cubeMesh;
     static std::unique_ptr<Shader> s_shader;
+
+    // Add other static resources here as needed, e.g., meshes or textures
 };

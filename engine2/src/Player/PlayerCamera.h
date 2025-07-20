@@ -4,7 +4,7 @@
 #include "PlayerPx.h"
 #include "RaycastingPx.h"
 
-// Forward declaration to avoid include cycle
+// Forward declaration
 class Door;
 
 class PlayerCamera : public Camera {
@@ -12,7 +12,7 @@ public:
     PlayerCamera();
 
     bool InitPhysics();
-    void Update(float deltaX, float deltaY, float deltaTime);
+    void Update(float deltaTime) override;
 
 private:
     float m_mouseSensitivity = 0.1f;

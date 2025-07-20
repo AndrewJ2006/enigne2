@@ -4,16 +4,26 @@
 #include <iostream>
 #include <glad/glad.h>
 
+//5 main folders (AssetManager, Game, World, Backend, Renderer) 
+
+//AssetManager - Loads shaders,textures, etc...
+// Renderer - renders whatever assetmanager loads.
+// Game - Camera stuff, 
+
 int main() {
 
+    //1.  Initilaze backend (Backend)
     if (!Backend::Init(API::OPENGL, WindowedMode::WINDOWED)) {
         std::cerr << "Backend::Init() FAILED!\n";
         return -1;
     }
 
+    //2.  (Game, AssetManager, Renderer, World)
     Game game;
     game.Init();
 
+
+    //3.  (Backend, Game, World, Physics, Player)
     while (!Backend::WindowShouldClose()) {
         Backend::UpdateSubSystems();
         Backend::BeginFrame();
@@ -27,7 +37,7 @@ int main() {
 
         Backend::EndFrame();
     }
-
+    // Cleanup (Renderer)
     Renderer::Shutdown();
     return 0;
 }

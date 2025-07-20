@@ -1,14 +1,14 @@
 #pragma once
 #include <vector>
-#include "Base/Types.h"  // for Vertex
+#include "Base/Types.h"  // For Vertex or other asset types
 
 class AssetManager {
 public:
     static void Init();
-    static const std::vector<Vertex>& GetCubeVertices();
-    static const std::vector<unsigned int>& GetCubeIndices();
+
+    // Add other asset getters here as you add assets, for example:
+    // static const std::vector<Vertex>& GetSomeModelVertices();
 
 private:
-    static std::vector<Vertex> s_cubeVertices;
-    static std::vector<unsigned int> s_cubeIndices;
+    // Add private static members here as needed for assets.
 };

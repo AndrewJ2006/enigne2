@@ -1,7 +1,6 @@
 #include "PlayerCamera.h"
 #include "Backend.h"
 #include "ManagerPx.h"
-#include "RaycastingPx.h"
 #include "Door.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/common.hpp>
@@ -29,8 +28,10 @@ bool PlayerCamera::InitPhysics() {
     return true;
 }
 
-void PlayerCamera::Update(float deltaX, float deltaY, float deltaTime) {
+void PlayerCamera::Update(float deltaTime) {
     // Update camera rotation based on mouse movement
+    float deltaX, deltaY;
+    Backend::GetMouseDelta(deltaX, deltaY);
     Yaw += deltaX * m_mouseSensitivity;
     Pitch += deltaY * m_mouseSensitivity;
     Pitch = glm::clamp(Pitch, -89.0f, 89.0f);
@@ -49,7 +50,6 @@ void PlayerCamera::Update(float deltaX, float deltaY, float deltaTime) {
     if (movement.magnitudeSquared() > 0.01f)
         movement = movement.getNormalized();
 
-    // Apply movement speed scaled by deltaTime to control frame rate dependency
     PxVec3 moveWithSpeed = movement * m_moveSpeed * deltaTime;
     m_physics.Move(moveWithSpeed);
 
@@ -60,11 +60,11 @@ void PlayerCamera::Update(float deltaX, float deltaY, float deltaTime) {
     }
     m_jumpPressedLastFrame = jumpPressed;
 
-    // Door interaction
-    static bool ePressedLastFrame = false;
-    bool ePressed = Backend::IsKeyPressed(GLFW_KEY_E);
+    // Door interaction on 'F' key press (with debounce)
+    static bool fPressedLastFrame = false;
+    bool fPressed = Backend::IsKeyPressed(GLFW_KEY_F);
 
-    if (ePressed && !ePressedLastFrame) {
+    if (fPressed && !fPressedLastFrame) {
         PxScene* scene = PhysicsManager::Get().GetScene();
         RaycastingPx raycaster(scene);
 
@@ -76,7 +76,7 @@ void PlayerCamera::Update(float deltaX, float deltaY, float deltaTime) {
         float maxDistance = 3.5f;
 
         if (raycaster.Raycast(origin, direction, maxDistance, hitBuffer)) {
-            physx::PxActor* hitActor = hitBuffer.block.actor;
+            PxActor* hitActor = hitBuffer.block.actor;
             for (Door* door : g_Doors) {
                 if (door->GetRigidActor() == hitActor) {
                     door->ToggleOpenClose();
@@ -85,11 +85,12 @@ void PlayerCamera::Update(float deltaX, float deltaY, float deltaTime) {
             }
         }
     }
-    ePressedLastFrame = ePressed;
+    fPressedLastFrame = fPressed;
 
-    // Update physics state
+    // Update physics simulation for player
     m_physics.Update(deltaTime);
 
+    // Update camera position from physics controller position
     PxExtendedVec3 extendedPos = controller->getPosition();
     Position = glm::vec3(static_cast<float>(extendedPos.x),
         static_cast<float>(extendedPos.y),

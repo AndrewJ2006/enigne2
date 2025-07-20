@@ -16,39 +16,34 @@ extern std::vector<Door*> g_Doors;
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
     : Front(glm::vec3(0.0f, 0.0f, -1.0f)),
-    MovementSpeed(SPEED),
-    MouseSensitivity(SENSITIVITY),
-    Zoom(ZOOM),
-    Position(position),
-    WorldUp(up),
-    Yaw(yaw),
-    Pitch(pitch) {
+      MovementSpeed(SPEED),
+      MouseSensitivity(SENSITIVITY),
+      Zoom(ZOOM),
+      Position(position),
+      WorldUp(up),
+      Yaw(yaw),
+      Pitch(pitch)
+{
     updateCameraVectors();
 }
 
 Camera::Camera(float posX, float posY, float posZ,
-    float upX, float upY, float upZ,
-    float yaw, float pitch)
+               float upX, float upY, float upZ,
+               float yaw, float pitch)
     : Front(glm::vec3(0.0f, 0.0f, -1.0f)),
-    MovementSpeed(SPEED),
-    MouseSensitivity(SENSITIVITY),
-    Zoom(ZOOM),
-    Position(glm::vec3(posX, posY, posZ)),
-    WorldUp(glm::vec3(upX, upY, upZ)),
-    Yaw(yaw),
-    Pitch(pitch) {
+      MovementSpeed(SPEED),
+      MouseSensitivity(SENSITIVITY),
+      Zoom(ZOOM),
+      Position(glm::vec3(posX, posY, posZ)),
+      WorldUp(glm::vec3(upX, upY, upZ)),
+      Yaw(yaw),
+      Pitch(pitch)
+{
     updateCameraVectors();
 }
 
-glm::mat4 Camera::GetViewMatrix() {
-    return glm::lookAt(Position, Position + Front, Up);
-}
-
-glm::mat4 Camera::GetProjectionMatrix(float aspectRatio, float nearPlane, float farPlane) {
-    return glm::perspective(glm::radians(Zoom), aspectRatio, nearPlane, farPlane);
-}
-
-void Camera::UpdateFromInput(float deltaTime) {
+void Camera::Update(float deltaTime) {
+    // Default free camera input handling
     if (Backend::IsKeyPressed(GLFW_KEY_W)) ProcessKeyboard(FORWARD, deltaTime);
     if (Backend::IsKeyPressed(GLFW_KEY_S)) ProcessKeyboard(BACKWARD, deltaTime);
     if (Backend::IsKeyPressed(GLFW_KEY_A)) ProcessKeyboard(LEFT, deltaTime);
@@ -60,7 +55,6 @@ void Camera::UpdateFromInput(float deltaTime) {
     Backend::GetMouseDelta(mouseX, mouseY);
     ProcessMouseMovement(mouseX, mouseY);
 
-    // Handle interaction with 'F' key
     static bool fPressedLastFrame = false;
     bool fPressed = Backend::IsKeyPressed(GLFW_KEY_F);
 
@@ -71,28 +65,12 @@ void Camera::UpdateFromInput(float deltaTime) {
     fPressedLastFrame = fPressed;
 }
 
-void Camera::PerformRaycast() {
-    PxScene* scene = PhysicsManager::Get().GetScene();
-    RaycastingPx raycaster(scene);
+glm::mat4 Camera::GetViewMatrix() {
+    return glm::lookAt(Position, Position + Front, Up);
+}
 
-    PxVec3 origin(Position.x, Position.y, Position.z);
-    glm::vec3 frontNorm = glm::normalize(Front);
-    PxVec3 direction(frontNorm.x, frontNorm.y, frontNorm.z);
-
-    PxRaycastBuffer hitBuffer;
-    float maxDistance = 3.5f;
-
-    if (raycaster.Raycast(origin, direction, maxDistance, hitBuffer)) {
-        PxActor* hitActor = hitBuffer.block.actor;
-        if (hitActor) {
-            for (Door* door : g_Doors) {
-                if (door && door->GetRigidActor() == hitActor) {
-                    door->ToggleOpenClose();
-                    break;
-                }
-            }
-        }
-    }
+glm::mat4 Camera::GetProjectionMatrix(float aspectRatio, float nearPlane, float farPlane) {
+    return glm::perspective(glm::radians(Zoom), aspectRatio, nearPlane, farPlane);
 }
 
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime) {
@@ -124,6 +102,30 @@ void Camera::ProcessMouseScroll(float yoffset) {
     Zoom -= yoffset;
     if (Zoom < 1.0f)  Zoom = 1.0f;
     if (Zoom > 45.0f) Zoom = 45.0f;
+}
+
+void Camera::PerformRaycast() {
+    PxScene* scene = PhysicsManager::Get().GetScene();
+    RaycastingPx raycaster(scene);
+
+    PxVec3 origin(Position.x, Position.y, Position.z);
+    glm::vec3 frontNorm = glm::normalize(Front);
+    PxVec3 direction(frontNorm.x, frontNorm.y, frontNorm.z);
+
+    PxRaycastBuffer hitBuffer;
+    float maxDistance = 3.5f;
+
+    if (raycaster.Raycast(origin, direction, maxDistance, hitBuffer)) {
+        PxActor* hitActor = hitBuffer.block.actor;
+        if (hitActor) {
+            for (Door* door : g_Doors) {
+                if (door && door->GetRigidActor() == hitActor) {
+                    door->ToggleOpenClose();
+                    break;
+                }
+            }
+        }
+    }
 }
 
 void Camera::updateCameraVectors() {
