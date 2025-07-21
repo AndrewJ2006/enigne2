@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CreateInfo.h"
-#include "Types/Mesh.h"
+#include "Mesh.h"   // Adjusted path
 #include <memory>
 #include <string>
 #include <vector> // for std::vector
@@ -15,8 +15,9 @@ public:
 
     Mesh* GetMesh() const;
 
-    const std::string& GetMaterial() const;           // Declare GetMaterial
-    void SetDoors(const std::vector<DoorCreateInfo>& doors); // Declare SetDoors (optional)
+    // Add GetMaterial and SetDoors declarations if used
+    const std::string& GetMaterial() const;
+    void SetDoors(const std::vector<DoorCreateInfo>& doors);
 
 private:
     WallCreateInfo m_createInfo;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CreateInfo.h"
-#include "Types/Mesh.h"
+#include "Mesh.h"      // Adjusted path, assuming Mesh.h is in "Types"
 #include <memory>
 
 class Plane {

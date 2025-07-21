@@ -1,3 +1,6 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
+
 #include "World/World.h"
 #include "Types/Wall.h"
 #include "Types/Plane.h"

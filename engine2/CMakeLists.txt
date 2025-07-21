@@ -25,6 +25,8 @@
     src/Physics/PlayerPx.cpp
     src/Physics/RaycastingPx.cpp
 
+    src/Utils/UtilMesh.cpp
+    src/Utils/UtilRaycast.cpp
 
 )
 
@@ -46,10 +48,10 @@ target_include_directories(Main PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/World
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Physics
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Player
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Utils
 
 
     ${CMAKE_CURRENT_SOURCE_DIR}/res/Geometry
-
     ${CMAKE_CURRENT_SOURCE_DIR}/res/Shader
 
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/physx/include

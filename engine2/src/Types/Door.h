@@ -6,6 +6,7 @@
 #include <PxPhysicsAPI.h>
 #include "Mesh.h"
 #include "CreateInfo.h"
+#include "Transform.h"   // Include Transform for raycasting
 
 class Door {
 public:
@@ -19,6 +20,14 @@ public:
     glm::mat4 GetModelMatrix() const;
     Mesh* GetMesh() const;
     physx::PxRigidActor* GetRigidActor() const;
+
+    // New raycasting-related methods:
+    Transform GetTransform() const;
+    bool IsRayIntersecting(const glm::vec3& rayOrigin,
+        const glm::vec3& rayDir,
+        float maxDistance,
+        glm::vec3& outHitPos,
+        glm::vec3& outHitNormal);
 
 private:
     void UpdatePhysicsTransform();

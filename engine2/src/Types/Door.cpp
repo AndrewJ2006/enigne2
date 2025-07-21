@@ -1,11 +1,14 @@
+// Door.cpp
 #define GLM_ENABLE_EXPERIMENTAL
 #include "Door.h"
 #include "ManagerPx.h"
+#include "Utils.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 std::vector<Door*> g_Doors;
 
@@ -23,12 +26,12 @@ Door::Door(const DoorCreateInfo& createInfo)
 void Door::Init() {
     glm::vec3 size = m_createInfo.size;
     glm::vec3 position = m_createInfo.position;
-    position.y += size.y * 0.5f;  // Raise door so it sits on the floor
+    position.y += size.y * 0.5f;
 
-    float halfWidth = size.x * 0.5f;
-
-    // Create mesh with door size and color
-    m_mesh->Create(size, glm::vec3(1.0f, 0.3f, 0.0f));
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+    Util::CreateCubeMesh(vertices, indices, glm::vec3(1.0f, 0.3f, 0.0f));
+    m_mesh = std::make_unique<Mesh>(vertices, indices);
 
     physx::PxPhysics* physics = PhysicsManager::Get().GetPhysics();
     physx::PxMaterial* material = PhysicsManager::Get().GetMaterial();
@@ -38,7 +41,7 @@ void Door::Init() {
         return;
     }
 
-    // Calculate hinge position (left edge)
+    float halfWidth = size.x * 0.5f;
     glm::vec3 hingePos = position + glm::vec3(-halfWidth, 0.0f, 0.0f);
 
     physx::PxTransform hingeTransform(
@@ -47,7 +50,6 @@ void Door::Init() {
     );
 
     physx::PxBoxGeometry boxGeom(halfWidth, size.y * 0.5f, size.z * 0.5f);
-
     m_rigidActor = physics->createRigidDynamic(hingeTransform);
     if (!m_rigidActor) {
         std::cerr << "Failed to create PxRigidDynamic for door!" << std::endl;
@@ -55,10 +57,7 @@ void Door::Init() {
     }
 
     physx::PxRigidDynamic* dynamicActor = static_cast<physx::PxRigidDynamic*>(m_rigidActor);
-
-    // Create shape with local offset +halfWidth on X (to center box on door mesh)
     physx::PxTransform shapeLocalPose(physx::PxVec3(halfWidth, 0.0f, 0.0f));
-
     physx::PxShape* shape = physics->createShape(boxGeom, *material, true);
     if (!shape) {
         std::cerr << "Failed to create shape for door!" << std::endl;
@@ -73,20 +72,16 @@ void Door::Init() {
 
     dynamicActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
     dynamicActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
-
-    // Set user data for raycasting/object linking
     dynamicActor->userData = this;
 
     physx::PxScene* scene = PhysicsManager::Get().GetScene();
     if (scene)
         scene->addActor(*m_rigidActor);
 
-    // Add this door instance to the global door list if not already added
     if (std::find(g_Doors.begin(), g_Doors.end(), this) == g_Doors.end()) {
         g_Doors.push_back(this);
     }
 
-    // Set initial transform for rendering mesh
     glm::mat4 transform(1.0f);
     transform = glm::translate(transform, position);
     transform = glm::scale(transform, size);
@@ -116,16 +111,9 @@ void Door::Update(float deltaTime) {
 
         glm::mat4 transform(1.0f);
         transform = glm::translate(transform, position);
-
-        // Move pivot to left edge (hinge)
         transform = glm::translate(transform, glm::vec3(-halfWidth, 0.0f, 0.0f));
-
-        // Rotate door around hinge (Y axis)
         transform = glm::rotate(transform, glm::radians(m_currentAngle), glm::vec3(0, 1, 0));
-
-        // Move pivot back
         transform = glm::translate(transform, glm::vec3(halfWidth, 0.0f, 0.0f));
-
         transform = glm::scale(transform, m_createInfo.size);
 
         m_modelMatrix = transform;
@@ -154,8 +142,6 @@ void Door::UpdatePhysicsTransform() {
     glm::vec3 position = m_createInfo.position;
     position.y += m_createInfo.size.y * 0.5f;
     float halfWidth = m_createInfo.size.x * 0.5f;
-
-    // Actor origin is the hinge position (left edge)
     glm::vec3 hingePos = position + glm::vec3(-halfWidth, 0.0f, 0.0f);
 
     float radians = glm::radians(m_currentAngle);
@@ -180,4 +166,28 @@ Mesh* Door::GetMesh() const {
 
 physx::PxRigidActor* Door::GetRigidActor() const {
     return m_rigidActor;
+}
+
+Transform Door::GetTransform() const {
+    Transform t;
+    t.from_mat4(m_modelMatrix);
+    return t;
+}
+
+bool Door::IsRayIntersecting(
+    const glm::vec3& rayOrigin,
+    const glm::vec3& rayDir,
+    float maxDistance,
+    glm::vec3& outHitPos,
+    glm::vec3& outHitNormal)
+{
+    std::vector<Transform> doorTransformVec = { GetTransform() };
+    Util::CubeRayResult result = Util::CastCubeRay(rayOrigin, rayDir, doorTransformVec, maxDistance);
+
+    if (result.hitFound) {
+        outHitPos = result.hitPosition;
+        outHitNormal = result.hitNormal;
+        return true;
+    }
+    return false;
 }
