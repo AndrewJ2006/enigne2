@@ -1,5 +1,5 @@
-#include "ScenePx.h"
-#include "ManagerPx.h"
+#include "Physics.h"
+
 #include <iostream>
 #include <PxPhysicsAPI.h>
 

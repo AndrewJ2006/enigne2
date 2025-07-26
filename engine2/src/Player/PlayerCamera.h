@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Camera.h"
-#include "PlayerPx.h"
-#include "RaycastingPx.h"
+#include "Physics.h"
 
 // Forward declaration
 class Door;

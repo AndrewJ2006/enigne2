@@ -1,4 +1,4 @@
-#include "CollisionPx.h"
+#include <Physics.h>
 #include <iostream>
 
 using namespace physx;

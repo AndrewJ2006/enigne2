@@ -26,7 +26,6 @@
     src/Physics/RaycastingPx.cpp
 
     src/Utils/UtilMesh.cpp
-    src/Utils/UtilRaycast.cpp
 
 )
 

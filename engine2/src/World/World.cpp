@@ -10,8 +10,8 @@
 #include "JSON.h"
 #include "Shader/Shader.h"
 #include "Types/Mesh.h"
-#include "ManagerPx.h"
-#include "ScenePx.h"
+#include "Physics.h"
+
 
 #include <memory>
 #include <glm/gtc/matrix_transform.hpp>
@@ -31,7 +31,8 @@ void World::Init() {
     PhysicsManager::Get().Init();
 
     // Create static floor
-    ScenePx::CreateStaticFloor();
+    ScenePx scene;
+    scene.CreateStaticFloor();
 
     // Load JSON file describing the world
     nlohmann::json json = JSONLoader::LoadFromFile("StartHouse.json");

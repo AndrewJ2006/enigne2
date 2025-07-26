@@ -2,8 +2,8 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "ManagerPx.h"
-#include "CollisionPx.h"
+#include <Physics.h>
+
 
 #include <iostream>
 #include <PxControllerManager.h>

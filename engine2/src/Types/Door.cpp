@@ -1,7 +1,6 @@
-// Door.cpp
 #define GLM_ENABLE_EXPERIMENTAL
 #include "Door.h"
-#include "ManagerPx.h"
+#include "Physics.h"
 #include "Utils.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -124,20 +123,14 @@ void Door::Update(float deltaTime) {
 }
 
 void Door::ToggleOpenClose() {
-    if (m_targetAngle < 1.0f) {
-        m_targetAngle = 90.0f;
-        m_isOpen = true;
-    }
-    else {
-        m_targetAngle = 0.0f;
-        m_isOpen = false;
-    }
+    m_targetAngle = (m_targetAngle < 1.0f) ? 90.0f : 0.0f;
+    m_isOpen = (m_targetAngle > 1.0f);
+
     std::cout << "Door is now " << (m_isOpen ? "Open" : "Closed") << std::endl;
 }
 
 void Door::UpdatePhysicsTransform() {
-    if (!m_rigidActor)
-        return;
+    if (!m_rigidActor) return;
 
     glm::vec3 position = m_createInfo.position;
     position.y += m_createInfo.size.y * 0.5f;
@@ -172,22 +165,4 @@ Transform Door::GetTransform() const {
     Transform t;
     t.from_mat4(m_modelMatrix);
     return t;
-}
-
-bool Door::IsRayIntersecting(
-    const glm::vec3& rayOrigin,
-    const glm::vec3& rayDir,
-    float maxDistance,
-    glm::vec3& outHitPos,
-    glm::vec3& outHitNormal)
-{
-    std::vector<Transform> doorTransformVec = { GetTransform() };
-    Util::CubeRayResult result = Util::CastCubeRay(rayOrigin, rayDir, doorTransformVec, maxDistance);
-
-    if (result.hitFound) {
-        outHitPos = result.hitPosition;
-        outHitNormal = result.hitNormal;
-        return true;
-    }
-    return false;
 }

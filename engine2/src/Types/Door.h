@@ -6,7 +6,7 @@
 #include <PxPhysicsAPI.h>
 #include "Mesh.h"
 #include "CreateInfo.h"
-#include "Transform.h"   // Include Transform for raycasting
+#include "Transform.h"
 
 class Door {
 public:
@@ -21,13 +21,7 @@ public:
     Mesh* GetMesh() const;
     physx::PxRigidActor* GetRigidActor() const;
 
-    // New raycasting-related methods:
     Transform GetTransform() const;
-    bool IsRayIntersecting(const glm::vec3& rayOrigin,
-        const glm::vec3& rayDir,
-        float maxDistance,
-        glm::vec3& outHitPos,
-        glm::vec3& outHitNormal);
 
 private:
     void UpdatePhysicsTransform();
@@ -38,10 +32,9 @@ private:
 
     glm::mat4 m_modelMatrix{ 1.0f };
 
-    // Animation state
-    float m_currentAngle = 0.0f;      // Current Y-axis rotation in degrees
-    float m_targetAngle = 0.0f;       // Target Y-axis rotation in degrees
-    float m_rotationSpeed = 90.0f;    // Degrees per second
+    float m_currentAngle = 0.0f;
+    float m_targetAngle = 0.0f;
+    float m_rotationSpeed = 90.0f;
     bool m_isOpen = false;
 };
 
