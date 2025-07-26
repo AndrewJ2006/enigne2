@@ -1,4 +1,3 @@
-#define GLM_ENABLE_EXPERIMENTAL
 #include "Door.h"
 #include "Physics.h"
 #include "Utils.h"
@@ -45,9 +44,9 @@ void Door::Init() {
     // Hinge position: left edge at base of door (no vertical offset)
     glm::vec3 hingePos = position + glm::vec3(-halfWidth, 0.0f, 0.0f);
 
-    // Create actor at hinge position (base of door)
+    // *** IMPORTANT: Move rigid actor up by halfHeight to align collider and mesh pivot ***
     physx::PxTransform hingeTransform(
-        physx::PxVec3(hingePos.x, hingePos.y, hingePos.z),
+        physx::PxVec3(hingePos.x, hingePos.y + halfHeight, hingePos.z),
         physx::PxQuat(0, physx::PxVec3(0, 1, 0))
     );
 
@@ -61,7 +60,7 @@ void Door::Init() {
 
     physx::PxRigidDynamic* dynamicActor = static_cast<physx::PxRigidDynamic*>(m_rigidActor);
 
-    // Shift shape so that collider extends right from hinge (local pose)
+    // Keep collider local pose offset to halfHeight so collider extends from base upwards
     physx::PxTransform shapeLocalPose(physx::PxVec3(halfWidth, halfHeight, 0.0f));
 
     physx::PxShape* shape = physics->createShape(boxGeom, *material, true);
@@ -88,7 +87,7 @@ void Door::Init() {
         g_Doors.push_back(this);
     }
 
-    // Model matrix: position door at its base + size offset to center
+    // Model matrix: position door at its base + size offset to center (halfHeight up)
     glm::mat4 transform(1.0f);
     transform = glm::translate(transform, position + glm::vec3(0.0f, halfHeight, 0.0f));
     transform = glm::scale(transform, size);
@@ -144,7 +143,8 @@ void Door::UpdatePhysicsTransform() {
     float halfWidth = m_createInfo.size.x * 0.5f;
     float halfHeight = m_createInfo.size.y * 0.5f;
 
-    glm::vec3 hingePos = position + glm::vec3(-halfWidth, 0.0f, 0.0f);
+    // Align physics transform hinge at base + halfHeight (same as rigid actor initial position)
+    glm::vec3 hingePos = position + glm::vec3(-halfWidth, halfHeight, 0.0f);
 
     float radians = glm::radians(m_currentAngle);
     physx::PxQuat pxRot(radians, physx::PxVec3(0, 1, 0));

@@ -68,7 +68,7 @@ void Player::Update(float deltaTime) {
 
         glm::vec3 camPos = m_camera.GetPosition() + glm::vec3(0.0f, 1.75f, 0.0f); // Slightly above ground
         glm::vec3 camDir = glm::normalize(m_camera.GetFront());
-        float maxDistance = 3.5f;
+        float maxDistance = 5.0f;
 
         Door* hitDoor = Util::RaycastForDoor(scene, camPos, camDir, maxDistance);
         if (hitDoor) {
