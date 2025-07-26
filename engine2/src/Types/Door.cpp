@@ -6,7 +6,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <iostream>
-#include <cmath>
 #include <algorithm>
 
 std::vector<Door*> g_Doors;
@@ -24,8 +23,7 @@ Door::Door(const DoorCreateInfo& createInfo)
 
 void Door::Init() {
     glm::vec3 size = m_createInfo.size;
-    glm::vec3 position = m_createInfo.position;
-    position.y += size.y * 0.5f;
+    glm::vec3 position = m_createInfo.position; // Position at base of door
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -41,14 +39,20 @@ void Door::Init() {
     }
 
     float halfWidth = size.x * 0.5f;
+    float halfHeight = size.y * 0.5f;
+    float halfDepth = size.z * 0.5f;
+
+    // Hinge position: left edge at base of door (no vertical offset)
     glm::vec3 hingePos = position + glm::vec3(-halfWidth, 0.0f, 0.0f);
 
+    // Create actor at hinge position (base of door)
     physx::PxTransform hingeTransform(
         physx::PxVec3(hingePos.x, hingePos.y, hingePos.z),
         physx::PxQuat(0, physx::PxVec3(0, 1, 0))
     );
 
-    physx::PxBoxGeometry boxGeom(halfWidth, size.y * 0.5f, size.z * 0.5f);
+    physx::PxBoxGeometry boxGeom(halfWidth, halfHeight, halfDepth);
+
     m_rigidActor = physics->createRigidDynamic(hingeTransform);
     if (!m_rigidActor) {
         std::cerr << "Failed to create PxRigidDynamic for door!" << std::endl;
@@ -56,7 +60,10 @@ void Door::Init() {
     }
 
     physx::PxRigidDynamic* dynamicActor = static_cast<physx::PxRigidDynamic*>(m_rigidActor);
-    physx::PxTransform shapeLocalPose(physx::PxVec3(halfWidth, 0.0f, 0.0f));
+
+    // Shift shape so that collider extends right from hinge (local pose)
+    physx::PxTransform shapeLocalPose(physx::PxVec3(halfWidth, halfHeight, 0.0f));
+
     physx::PxShape* shape = physics->createShape(boxGeom, *material, true);
     if (!shape) {
         std::cerr << "Failed to create shape for door!" << std::endl;
@@ -81,8 +88,9 @@ void Door::Init() {
         g_Doors.push_back(this);
     }
 
+    // Model matrix: position door at its base + size offset to center
     glm::mat4 transform(1.0f);
-    transform = glm::translate(transform, position);
+    transform = glm::translate(transform, position + glm::vec3(0.0f, halfHeight, 0.0f));
     transform = glm::scale(transform, size);
     m_modelMatrix = transform;
     m_mesh->SetModelMatrix(transform);
@@ -104,12 +112,12 @@ void Door::Update(float deltaTime) {
             m_currentAngle = m_targetAngle;
         }
 
-        glm::vec3 position = m_createInfo.position;
-        position.y += m_createInfo.size.y * 0.5f;
+        glm::vec3 position = m_createInfo.position; // base
         float halfWidth = m_createInfo.size.x * 0.5f;
+        float halfHeight = m_createInfo.size.y * 0.5f;
 
         glm::mat4 transform(1.0f);
-        transform = glm::translate(transform, position);
+        transform = glm::translate(transform, position + glm::vec3(0.0f, halfHeight, 0.0f));
         transform = glm::translate(transform, glm::vec3(-halfWidth, 0.0f, 0.0f));
         transform = glm::rotate(transform, glm::radians(m_currentAngle), glm::vec3(0, 1, 0));
         transform = glm::translate(transform, glm::vec3(halfWidth, 0.0f, 0.0f));
@@ -132,9 +140,10 @@ void Door::ToggleOpenClose() {
 void Door::UpdatePhysicsTransform() {
     if (!m_rigidActor) return;
 
-    glm::vec3 position = m_createInfo.position;
-    position.y += m_createInfo.size.y * 0.5f;
+    glm::vec3 position = m_createInfo.position; // base
     float halfWidth = m_createInfo.size.x * 0.5f;
+    float halfHeight = m_createInfo.size.y * 0.5f;
+
     glm::vec3 hingePos = position + glm::vec3(-halfWidth, 0.0f, 0.0f);
 
     float radians = glm::radians(m_currentAngle);

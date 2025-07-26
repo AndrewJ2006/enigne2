@@ -3,8 +3,12 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "Mesh.h"
+#include "Door.h"
+#include <PxPhysicsAPI.h>
 
 namespace Util {
+
+    // ----- GEOMETRY UTILITIES -----
 
     // Generates a cube mesh centered at the origin with size 1
     void CreateCubeMesh(
@@ -30,6 +34,16 @@ namespace Util {
         const std::vector<glm::vec3>& points,
         float height,
         float thickness = 0.2f
+    );
+
+    // ----- PHYSICS UTILITIES -----
+
+    // Performs a raycast and returns a pointer to the Door hit (or nullptr)
+    Door* RaycastForDoor(
+        physx::PxScene* scene,
+        const glm::vec3& origin,
+        const glm::vec3& direction,
+        float maxDistance
     );
 
 } // namespace Util

@@ -4,7 +4,6 @@
 
 #include <Physics.h>
 
-
 #include <iostream>
 #include <PxControllerManager.h>
 
@@ -61,13 +60,7 @@ void PhysicsManager::Init() {
         return;
     }
 
-    PxRigidStatic* groundPlane = PxCreatePlane(*m_physics, PxPlane(0, 1, 0, 0), *m_material);
-    if (!groundPlane) {
-        std::cerr << "Failed to create ground plane!" << std::endl;
-        return;
-    }
-
-    m_scene->addActor(*groundPlane);
+    // Ground plane creation removed — floor handled in World or scene JSON
 
     // Initialize collisions only (no debug)
     m_collisions = std::make_unique<CollisionsPx>(m_scene);

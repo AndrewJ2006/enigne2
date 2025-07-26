@@ -2,6 +2,7 @@
 #include "Backend.h"
 #include "Physics.h"
 #include "Door.h"
+#include "Utils.h"  // Include the utility header
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/common.hpp>
@@ -10,12 +11,11 @@
 
 using namespace physx;
 
-extern std::vector<Door*> g_Doors;
 bool Player::fPressedLastFrame = false;
 
 Player::Player()
     : m_raycast(PhysicsManager::Get().GetScene()),
-      m_jumpPressedLastFrame(false)
+    m_jumpPressedLastFrame(false)
 {
 }
 
@@ -36,7 +36,6 @@ void Player::Update(float deltaTime) {
     float newPitch = glm::clamp(m_camera.GetPitch() + deltaY * m_camera.GetMouseSensitivity(), -89.0f, 89.0f);
     m_camera.SetPitch(newPitch);
 
-    // Call public wrapper to update camera vectors
     m_camera.UpdateCameraVectors();
 
     PxController* controller = m_physics.GetController();
@@ -55,44 +54,33 @@ void Player::Update(float deltaTime) {
     PxVec3 moveWithSpeed = movement * m_camera.GetMovementSpeed() * deltaTime;
     m_physics.Move(moveWithSpeed);
 
-    // Jump input handling
+    // Jump
     bool jumpPressed = Backend::IsKeyPressed(GLFW_KEY_SPACE);
     if (jumpPressed && !m_jumpPressedLastFrame && m_physics.IsOnGround()) {
         m_physics.Jump();
     }
     m_jumpPressedLastFrame = jumpPressed;
 
-    // Door interaction on 'F' key press (with debounce)
+    // Door interaction on 'F' key press
     bool fPressed = Backend::IsKeyPressed(GLFW_KEY_F);
-
     if (fPressed && !fPressedLastFrame) {
         PxScene* scene = PhysicsManager::Get().GetScene();
-        RaycastingPx raycaster(scene);
 
-        glm::vec3 camPos = m_camera.GetPosition();
-        PxVec3 origin(camPos.x, camPos.y + 1.75f, camPos.z);
-        glm::vec3 frontNorm = glm::normalize(m_camera.GetFront());
-        PxVec3 direction(frontNorm.x, frontNorm.y, frontNorm.z);
-
-        PxRaycastBuffer hitBuffer;
+        glm::vec3 camPos = m_camera.GetPosition() + glm::vec3(0.0f, 1.75f, 0.0f); // Slightly above ground
+        glm::vec3 camDir = glm::normalize(m_camera.GetFront());
         float maxDistance = 3.5f;
 
-        if (raycaster.Raycast(origin, direction, maxDistance, hitBuffer)) {
-            PxActor* hitActor = hitBuffer.block.actor;
-            for (Door* door : g_Doors) {
-                if (door->GetRigidActor() == hitActor) {
-                    door->ToggleOpenClose();
-                    break;
-                }
-            }
+        Door* hitDoor = Util::RaycastForDoor(scene, camPos, camDir, maxDistance);
+        if (hitDoor) {
+            hitDoor->ToggleOpenClose();
         }
     }
     fPressedLastFrame = fPressed;
 
-    // Update physics simulation for player
+    // Physics update
     m_physics.Update(deltaTime);
 
-    // Sync camera position to physics controller position
+    // Sync camera with controller
     PxExtendedVec3 extendedPos = controller->getPosition();
     m_camera.SetPosition(glm::vec3(static_cast<float>(extendedPos.x),
         static_cast<float>(extendedPos.y),
