@@ -13,7 +13,7 @@ static float s_mouseDeltaX = 0.0f;
 static float s_mouseDeltaY = 0.0f;
 static bool cursorDisabled = true;
 
-// New: Framebuffer size callback to update viewport on window resize
+// Framebuffer resize callback
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
@@ -26,10 +26,8 @@ bool Backend::Init(API api, WindowedMode mode) {
         return false;
     }
 
-    // Set OpenGL context current
     glfwMakeContextCurrent(g_window.GetGLFWWindow());
 
-    // Register framebuffer resize callback here
     glfwSetFramebufferSizeCallback(g_window.GetGLFWWindow(), framebuffer_size_callback);
 
     if (glfwRawMouseMotionSupported())
@@ -49,18 +47,15 @@ bool Backend::Init(API api, WindowedMode mode) {
         s_lastMouseY = ypos;
         });
 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
-    glCullFace(GL_BACK); // Cull only back faces
+    glCullFace(GL_BACK);
     glDepthFunc(GL_LESS);
 
-    // Set initial viewport size to current framebuffer size
     int width, height;
     g_window.GetFramebufferSize(width, height);
     glViewport(0, 0, width, height);
 
-    // Hide cursor initially
     glfwSetInputMode(g_window.GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     s_lastTime = static_cast<float>(glfwGetTime());
@@ -74,11 +69,8 @@ void Backend::UpdateSubSystems() {
     bool escapeCurrentlyPressed = IsKeyPressed(GLFW_KEY_ESCAPE);
 
     if (escapeCurrentlyPressed && !escapePreviouslyPressed) {
-        // Escape was just pressed
         cursorDisabled = !cursorDisabled;
         glfwSetInputMode(g_window.GetGLFWWindow(), GLFW_CURSOR, cursorDisabled ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
-
-        // Reset first mouse flag to avoid sudden jump on next mouse movement
         s_firstMouse = true;
     }
 
@@ -88,7 +80,6 @@ void Backend::UpdateSubSystems() {
     s_deltaTime = currentTime - s_lastTime;
     s_lastTime = currentTime;
 }
-
 
 void Backend::BeginFrame() {
     g_window.BeginFrame();

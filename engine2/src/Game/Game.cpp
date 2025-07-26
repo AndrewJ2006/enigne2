@@ -19,22 +19,21 @@ void Game::Init() {
     Renderer::Init();
     m_world.Init();
 
-    if (!m_playerCamera.InitPhysics()) {
+    if (!m_player.InitPhysics()) {
         throw std::runtime_error("Failed to initialize PlayerCamera physics.");
     }
 
-    m_activeCamera = &m_playerCamera;
+    m_activeCamera = &(m_player.GetCamera());
 }
 
 void Game::Update(float deltaTime) {
-    // Handle camera toggle with debounce on 'C' key
     if (Backend::IsKeyPressed(GLFW_KEY_C)) {
         if (!m_cameraTogglePressed) {
-            if (m_activeCamera == &m_playerCamera) {
+            if (m_activeCamera == &(m_player.GetCamera())) {
                 m_activeCamera = &m_freeCamera;
             }
             else {
-                m_activeCamera = &m_playerCamera;
+                m_activeCamera = &(m_player.GetCamera());
             }
             m_cameraTogglePressed = true;
         }
@@ -43,15 +42,14 @@ void Game::Update(float deltaTime) {
         m_cameraTogglePressed = false;
     }
 
-    // Update active camera
-    if (m_activeCamera == &m_playerCamera) {
-        m_playerCamera.Update(deltaTime);
+    if (m_activeCamera == &(m_player.GetCamera())) {
+        m_player.Update(deltaTime);
     }
     else if (m_activeCamera == &m_freeCamera) {
         m_freeCamera.Update(deltaTime);
     }
     else {
-        m_activeCamera = &m_playerCamera; // fallback safety
+        m_activeCamera = &(m_player.GetCamera());
     }
 
     m_world.Update(deltaTime);

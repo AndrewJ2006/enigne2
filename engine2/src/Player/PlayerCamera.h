@@ -1,24 +1,27 @@
 #pragma once
 
 #include "Camera.h"
-#include "Physics.h"
-
-// Forward declaration
-class Door;
 
 class PlayerCamera : public Camera {
 public:
     PlayerCamera();
 
-    bool InitPhysics();
-    void Update(float deltaTime) override;
+    // Public wrapper for protected updateCameraVectors
+    void UpdateCameraVectors() { updateCameraVectors(); }
 
-private:
-    float m_mouseSensitivity = 0.1f;
-    float m_moveSpeed = 90.0f;
+    // Expose protected members via getters if needed
+    float GetYaw() const { return Yaw; }
+    void SetYaw(float yaw) { Yaw = yaw; }
 
-    PlayerPhysics m_physics;
-    RaycastingPx m_raycast;
+    float GetPitch() const { return Pitch; }
+    void SetPitch(float pitch) { Pitch = pitch; }
 
-    bool m_jumpPressedLastFrame = false;
+    float GetMovementSpeed() const { return MovementSpeed; }
+    float GetMouseSensitivity() const { return MouseSensitivity; }
+
+    glm::vec3 GetPosition() const { return Position; }
+    void SetPosition(const glm::vec3& position) { Position = position; }
+
+    glm::vec3 GetFront() const { return Front; }
+    glm::vec3 GetRight() const { return Right; }
 };

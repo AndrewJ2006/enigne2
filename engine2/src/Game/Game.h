@@ -1,5 +1,7 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H
 
+#include "Player.h"
 #include "PlayerCamera.h"
 #include "Camera.h"
 #include "World.h"
@@ -14,11 +16,14 @@ public:
     bool ShouldClose();
 
 private:
+    Player m_player;
     PlayerCamera m_playerCamera;
     Camera m_freeCamera;
-    Camera* m_activeCamera = nullptr;
 
-    bool m_cameraTogglePressed = false;
+    Camera* m_activeCamera;
 
+    bool m_cameraTogglePressed;
     World m_world;
 };
+
+#endif // GAME_H
