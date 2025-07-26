@@ -10,7 +10,8 @@ Game::Game()
         -90.0f,
         -20.0f),
     m_cameraTogglePressed(false),
-    m_activeCamera(nullptr)
+    m_activeCamera(nullptr),
+    m_editor(nullptr)  // Initialize editor with null camera pointer
 {
 }
 
@@ -24,9 +25,13 @@ void Game::Init() {
     }
 
     m_activeCamera = &(m_player.GetCamera());
+
+    // Set camera for editor after initialization
+    m_editor.SetCamera(m_activeCamera);
 }
 
 void Game::Update(float deltaTime) {
+    // Camera toggle between player and free camera
     if (Backend::IsKeyPressed(GLFW_KEY_C)) {
         if (!m_cameraTogglePressed) {
             if (m_activeCamera == &(m_player.GetCamera())) {
@@ -36,12 +41,16 @@ void Game::Update(float deltaTime) {
                 m_activeCamera = &(m_player.GetCamera());
             }
             m_cameraTogglePressed = true;
+
+            // Update editor's camera when toggling
+            m_editor.SetCamera(m_activeCamera);
         }
     }
     else {
         m_cameraTogglePressed = false;
     }
 
+    // Update active camera and player
     if (m_activeCamera == &(m_player.GetCamera())) {
         m_player.Update(deltaTime);
     }
@@ -52,7 +61,11 @@ void Game::Update(float deltaTime) {
         m_activeCamera = &(m_player.GetCamera());
     }
 
+    // Update the world
     m_world.Update(deltaTime);
+
+    // Update the editor (raycasting, etc)
+    m_editor.Update(deltaTime);
 }
 
 void Game::Render() {
@@ -60,7 +73,7 @@ void Game::Render() {
 
     float aspect = Backend::GetAspectRatio();
     glm::mat4 view = m_activeCamera->GetViewMatrix();
-    glm::mat4 projection = m_activeCamera->GetProjectionMatrix(aspect);
+    glm::mat4 projection = m_activeCamera->GetProjectionMatrix(aspect, 0.1f, 100.0f);
 
     Renderer::DrawScene(view, projection, m_world);
     m_world.Draw();

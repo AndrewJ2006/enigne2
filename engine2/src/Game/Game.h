@@ -3,7 +3,8 @@
 
 #include "Player.h"
 #include "PlayerCamera.h"
-#include "Camera.h"
+#include "CameraEditor.h"
+#include "Editor.h"         // Include Editor
 #include "World.h"
 
 class Game {
@@ -24,6 +25,8 @@ private:
 
     bool m_cameraTogglePressed;
     World m_world;
+
+    Editor m_editor;       // Editor as a member (default constructible)
 };
 
 #endif // GAME_H

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Camera.h"
+#include "CameraEditor.h"
 
 class PlayerCamera : public Camera {
 public:

@@ -1,34 +1,19 @@
 #pragma once
 
-// Standard library
 #include <vector>
-
-// GLM
 #include <glm/glm.hpp>
-
-// Project-specific includes
 #include "Mesh.h"
-#include "Transform.h"  // Needed for cube transforms
 
 namespace Util {
 
-    // Result structure for raycasting against cubes
-    struct CubeRayResult {
-        bool hitFound = false;
-        float distanceToHit = 0.0f;
-        glm::vec3 hitPosition = glm::vec3(0.0f);
-        glm::vec3 hitNormal = glm::vec3(0.0f);
-        Transform cubeTransform; // Transform of the cube hit
-    };
-
-    // Mesh Generation Utilities
-
+    // Generates a cube mesh centered at the origin with size 1
     void CreateCubeMesh(
         std::vector<Vertex>& outVertices,
         std::vector<unsigned int>& outIndices,
         const glm::vec3& color = glm::vec3(1.0f)
     );
 
+    // Generates a flat quad/plane mesh from 4 corner points
     void CreatePlaneMesh(
         std::vector<Vertex>& outVertices,
         std::vector<unsigned int>& outIndices,
@@ -38,39 +23,13 @@ namespace Util {
         const glm::vec3& p3
     );
 
+    // Generates a prism-shaped wall from a sequence of base points
     void CreatePrismWallMesh(
         std::vector<Vertex>& outVertices,
         std::vector<unsigned int>& outIndices,
         const std::vector<glm::vec3>& points,
         float height,
         float thickness = 0.2f
-    );
-
-    // Raycasting
-
-    [[nodiscard]] CubeRayResult CastCubeRay(
-        const glm::vec3& rayOrigin,
-        const glm::vec3& rayDir,
-        const std::vector<Transform>& cubeTransforms,
-        float maxDistance
-    );
-
-    [[nodiscard]] bool RayIntersectsTriangle(
-        const glm::vec3& rayOrigin,
-        const glm::vec3& rayDir,
-        const glm::vec3& v0,
-        const glm::vec3& v1,
-        const glm::vec3& v2,
-        float& t
-    );
-
-    [[nodiscard]] glm::vec3 GetMouseRayDir(
-        const glm::mat4& projection,
-        const glm::mat4& view,
-        int windowWidth,
-        int windowHeight,
-        int mouseX,
-        int mouseY
     );
 
 } // namespace Util

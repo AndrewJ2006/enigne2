@@ -1,26 +1,19 @@
-#include "Camera.h"
+#include "CameraEditor.h"
 #include "Backend.h"
-#include "Physics.h"      // Your physics manager and raycasting wrapper
-#include "Door.h"         // Door class with ToggleOpenClose
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/constants.hpp>
 #include <algorithm>
 
-using namespace physx;
-
-extern std::vector<Door*> g_Doors;  // Your global door list
-
+// Use DEFAULT_* constants as declared in header
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
     : Position(position),
     WorldUp(up),
     Yaw(yaw),
     Pitch(pitch),
     Front(glm::vec3(0.0f, 0.0f, -1.0f)),
-    MovementSpeed(SPEED),
-    MouseSensitivity(SENSITIVITY),
-    Zoom(ZOOM)
-{
+    MovementSpeed(DEFAULT_SPEED),
+    MouseSensitivity(DEFAULT_SENSITIVITY),
+    Zoom(DEFAULT_ZOOM) {
     updateCameraVectors();
 }
 
@@ -32,15 +25,13 @@ Camera::Camera(float posX, float posY, float posZ,
     Yaw(yaw),
     Pitch(pitch),
     Front(glm::vec3(0.0f, 0.0f, -1.0f)),
-    MovementSpeed(SPEED),
-    MouseSensitivity(SENSITIVITY),
-    Zoom(ZOOM)
-{
+    MovementSpeed(DEFAULT_SPEED),
+    MouseSensitivity(DEFAULT_SENSITIVITY),
+    Zoom(DEFAULT_ZOOM) {
     updateCameraVectors();
 }
 
 void Camera::Update(float deltaTime) {
-    // Keyboard input handled here
     if (Backend::IsKeyPressed(GLFW_KEY_W)) ProcessKeyboard(FORWARD, deltaTime);
     if (Backend::IsKeyPressed(GLFW_KEY_S)) ProcessKeyboard(BACKWARD, deltaTime);
     if (Backend::IsKeyPressed(GLFW_KEY_A)) ProcessKeyboard(LEFT, deltaTime);
@@ -48,18 +39,9 @@ void Camera::Update(float deltaTime) {
     if (Backend::IsKeyPressed(GLFW_KEY_E)) ProcessKeyboard(UP, deltaTime);
     if (Backend::IsKeyPressed(GLFW_KEY_Q)) ProcessKeyboard(DOWN, deltaTime);
 
-    // Mouse movement input
     float mouseX, mouseY;
     Backend::GetMouseDelta(mouseX, mouseY);
     ProcessMouseMovement(mouseX, mouseY);
-
-    // Raycast on pressing F key
-    static bool fPressedLastFrame = false;
-    bool fPressed = Backend::IsKeyPressed(GLFW_KEY_F);
-    if (fPressed && !fPressedLastFrame) {
-        PerformRaycast();
-    }
-    fPressedLastFrame = fPressed;
 }
 
 glm::mat4 Camera::GetViewMatrix() const {
@@ -101,79 +83,23 @@ void Camera::ProcessMouseScroll(float yoffset) {
     if (Zoom > 45.0f) Zoom = 45.0f;
 }
 
-void Camera::PerformRaycast() {
-    PxScene* scene = PhysicsManager::Get().GetScene();
-    RaycastingPx raycaster(scene);
+void Camera::SetPosition(const glm::vec3& position) { Position = position; }
+glm::vec3 Camera::GetPosition() const { return Position; }
 
-    PxVec3 origin(Position.x, Position.y, Position.z);
-    glm::vec3 frontNorm = glm::normalize(Front);
-    PxVec3 direction(frontNorm.x, frontNorm.y, frontNorm.z);
+void Camera::SetYaw(float yaw) { Yaw = yaw; updateCameraVectors(); }
+float Camera::GetYaw() const { return Yaw; }
 
-    PxRaycastBuffer hitBuffer;
-    float maxDistance = 3.5f;
+void Camera::SetPitch(float pitch) { Pitch = pitch; updateCameraVectors(); }
+float Camera::GetPitch() const { return Pitch; }
 
-    if (raycaster.Raycast(origin, direction, maxDistance, hitBuffer)) {
-        PxActor* hitActor = hitBuffer.block.actor;
-        if (hitActor) {
-            for (Door* door : g_Doors) {
-                if (door && door->GetRigidActor() == hitActor) {
-                    door->ToggleOpenClose();
-                    break;
-                }
-            }
-        }
-    }
-}
+void Camera::SetMovementSpeed(float speed) { MovementSpeed = speed; }
+float Camera::GetMovementSpeed() const { return MovementSpeed; }
 
-void Camera::SetPosition(const glm::vec3& position) {
-    Position = position;
-}
+void Camera::SetMouseSensitivity(float sensitivity) { MouseSensitivity = sensitivity; }
+float Camera::GetMouseSensitivity() const { return MouseSensitivity; }
 
-glm::vec3 Camera::GetPosition() const {
-    return Position;
-}
-
-void Camera::SetYaw(float yaw) {
-    Yaw = yaw;
-    updateCameraVectors();
-}
-
-float Camera::GetYaw() const {
-    return Yaw;
-}
-
-void Camera::SetPitch(float pitch) {
-    Pitch = pitch;
-    updateCameraVectors();
-}
-
-float Camera::GetPitch() const {
-    return Pitch;
-}
-
-void Camera::SetMovementSpeed(float speed) {
-    MovementSpeed = speed;
-}
-
-float Camera::GetMovementSpeed() const {
-    return MovementSpeed;
-}
-
-void Camera::SetMouseSensitivity(float sensitivity) {
-    MouseSensitivity = sensitivity;
-}
-
-float Camera::GetMouseSensitivity() const {
-    return MouseSensitivity;
-}
-
-void Camera::SetZoom(float zoom) {
-    Zoom = std::clamp(zoom, 1.0f, 45.0f);
-}
-
-float Camera::GetZoom() const {
-    return Zoom;
-}
+void Camera::SetZoom(float zoom) { Zoom = std::clamp(zoom, 1.0f, 45.0f); }
+float Camera::GetZoom() const { return Zoom; }
 
 void Camera::updateCameraVectors() {
     glm::vec3 front;

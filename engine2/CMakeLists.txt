@@ -5,7 +5,9 @@
     src/Types/Mesh.cpp
     src/Types/Plane.cpp
     src/Renderer/Renderer.cpp
-    src/Camera/Camera.cpp
+    src/Editor/CameraEditor.cpp
+    src/Editor/Editor.cpp
+
     src/Game/Game.cpp
     src/AssetManager/AssetManager.cpp
     src/World/World.cpp
@@ -48,6 +50,7 @@ target_include_directories(Main PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Physics
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Player
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor
 
 
     ${CMAKE_CURRENT_SOURCE_DIR}/res/Geometry

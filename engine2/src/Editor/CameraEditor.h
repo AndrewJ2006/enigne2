@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 enum Camera_Movement {
     FORWARD,
@@ -11,32 +12,25 @@ enum Camera_Movement {
     DOWN
 };
 
-const float SPEED = 2.5f;
-const float SENSITIVITY = 0.1f;
-const float ZOOM = 45.0f;
+constexpr float DEFAULT_YAW = -90.0f;
+constexpr float DEFAULT_PITCH = 0.0f;
+constexpr float DEFAULT_SPEED = 3.5f;
+constexpr float DEFAULT_SENSITIVITY = 0.1f;
+constexpr float DEFAULT_ZOOM = 45.0f;
 
 class Camera {
 public:
-    // Constructors
     Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch);
-    Camera(float posX, float posY, float posZ,
-        float upX, float upY, float upZ,
-        float yaw, float pitch);
+    Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 
-    virtual ~Camera() = default;
-
-    // Main update function: processes input internally
-    virtual void Update(float deltaTime);
-
+    void Update(float deltaTime);
     glm::mat4 GetViewMatrix() const;
-    glm::mat4 GetProjectionMatrix(float aspectRatio, float nearPlane = 0.1f, float farPlane = 100.0f) const;
+    glm::mat4 GetProjectionMatrix(float aspectRatio, float nearPlane, float farPlane) const;
 
     void ProcessKeyboard(Camera_Movement direction, float deltaTime);
     void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
     void ProcessMouseScroll(float yoffset);
-    void PerformRaycast();
 
-    // Setters/getters
     void SetPosition(const glm::vec3& position);
     glm::vec3 GetPosition() const;
 
@@ -55,9 +49,11 @@ public:
     void SetZoom(float zoom);
     float GetZoom() const;
 
-    void updateCameraVectors();
+    glm::vec3 GetFront() const { return Front; }
 
 protected:
+    void updateCameraVectors();
+
     glm::vec3 Position;
     glm::vec3 Front;
     glm::vec3 Up;
@@ -66,7 +62,6 @@ protected:
 
     float Yaw;
     float Pitch;
-
     float MovementSpeed;
     float MouseSensitivity;
     float Zoom;
