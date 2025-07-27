@@ -2,9 +2,8 @@
 #define GAME_H
 
 #include "Player.h"
-#include "PlayerCamera.h"
 #include "CameraEditor.h"
-#include "Editor.h"         // Include Editor
+#include "Editor.h"
 #include "World.h"
 
 class Game {
@@ -18,15 +17,14 @@ public:
 
 private:
     Player m_player;
-    PlayerCamera m_playerCamera;
-    Camera m_freeCamera;
+    CameraEditor m_freeCamera;   // Free camera for editor mode
 
-    Camera* m_activeCamera;
+    Camera* m_activeCamera = nullptr;  // Pointer to currently active camera
 
-    bool m_cameraTogglePressed;
+    bool m_cameraTogglePressed = false;
     World m_world;
 
-    Editor m_editor;       // Editor as a member (default constructible)
+    Editor m_editor;
 };
 
 #endif // GAME_H

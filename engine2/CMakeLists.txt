@@ -2,6 +2,7 @@
     src/Main.cpp
     src/Backend/Backend.cpp
     src/Backend/GLwindow.cpp
+    src/Backend/Camera.cpp
     src/Types/Mesh.cpp
     src/Types/Plane.cpp
     src/Renderer/Renderer.cpp

@@ -11,7 +11,7 @@ Game::Game()
         -20.0f),
     m_cameraTogglePressed(false),
     m_activeCamera(nullptr),
-    m_editor(nullptr)  // Initialize editor with null camera pointer
+    m_editor()
 {
 }
 
@@ -21,17 +21,18 @@ void Game::Init() {
     m_world.Init();
 
     if (!m_player.InitPhysics()) {
-        throw std::runtime_error("Failed to initialize PlayerCamera physics.");
+        throw std::runtime_error("Failed to initialize Player physics.");
     }
 
+    // Set starting camera to player camera
     m_activeCamera = &(m_player.GetCamera());
 
-    // Set camera for editor after initialization
+    // Set camera for editor
     m_editor.SetCamera(m_activeCamera);
 }
 
 void Game::Update(float deltaTime) {
-    // Camera toggle between player and free camera
+    // Toggle camera on 'C' key press
     if (Backend::IsKeyPressed(GLFW_KEY_C)) {
         if (!m_cameraTogglePressed) {
             if (m_activeCamera == &(m_player.GetCamera())) {
@@ -42,7 +43,6 @@ void Game::Update(float deltaTime) {
             }
             m_cameraTogglePressed = true;
 
-            // Update editor's camera when toggling
             m_editor.SetCamera(m_activeCamera);
         }
     }
@@ -50,7 +50,7 @@ void Game::Update(float deltaTime) {
         m_cameraTogglePressed = false;
     }
 
-    // Update active camera and player
+    // Update active camera and player accordingly
     if (m_activeCamera == &(m_player.GetCamera())) {
         m_player.Update(deltaTime);
     }
@@ -61,10 +61,7 @@ void Game::Update(float deltaTime) {
         m_activeCamera = &(m_player.GetCamera());
     }
 
-    // Update the world
     m_world.Update(deltaTime);
-
-    // Update the editor (raycasting, etc)
     m_editor.Update(deltaTime);
 }
 

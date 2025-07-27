@@ -1,12 +1,10 @@
 #include "Player.h"
 #include "Backend.h"
-#include "Physics.h"
 #include "Door.h"
-#include "Utils.h"  // Include the utility header
+#include "Utils.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/common.hpp>
-#include <PxPhysicsAPI.h>
 #include <stdexcept>
 
 using namespace physx;
@@ -27,7 +25,6 @@ bool Player::InitPhysics() {
 }
 
 void Player::Update(float deltaTime) {
-    // Update camera rotation based on mouse movement
     float deltaX, deltaY;
     Backend::GetMouseDelta(deltaX, deltaY);
 
@@ -41,7 +38,6 @@ void Player::Update(float deltaTime) {
     PxController* controller = m_physics.GetController();
     if (!controller) throw std::runtime_error("PlayerPhysics controller is null");
 
-    // Handle player movement input
     PxVec3 movement(0.0f);
     if (Backend::IsKeyPressed(GLFW_KEY_W)) movement += PxVec3(m_camera.GetFront().x, 0.0f, m_camera.GetFront().z);
     if (Backend::IsKeyPressed(GLFW_KEY_S)) movement -= PxVec3(m_camera.GetFront().x, 0.0f, m_camera.GetFront().z);
@@ -54,21 +50,19 @@ void Player::Update(float deltaTime) {
     PxVec3 moveWithSpeed = movement * m_camera.GetMovementSpeed() * deltaTime;
     m_physics.Move(moveWithSpeed);
 
-    // Jump
     bool jumpPressed = Backend::IsKeyPressed(GLFW_KEY_SPACE);
     if (jumpPressed && !m_jumpPressedLastFrame && m_physics.IsOnGround()) {
         m_physics.Jump();
     }
     m_jumpPressedLastFrame = jumpPressed;
 
-    // Door interaction on 'F' key press
     bool fPressed = Backend::IsKeyPressed(GLFW_KEY_F);
     if (fPressed && !fPressedLastFrame) {
         PxScene* scene = PhysicsManager::Get().GetScene();
 
-        glm::vec3 camPos = m_camera.GetPosition() + glm::vec3(0.0f, 1.75f, 0.0f); // Slightly above ground
+        glm::vec3 camPos = m_camera.GetPosition() + glm::vec3(0.0f, 1.75f, 0.0f);
         glm::vec3 camDir = glm::normalize(m_camera.GetFront());
-        float maxDistance = 5.0f;
+        float maxDistance = 10.0f;
 
         Door* hitDoor = Util::RaycastForDoor(scene, camPos, camDir, maxDistance);
         if (hitDoor) {
@@ -77,10 +71,8 @@ void Player::Update(float deltaTime) {
     }
     fPressedLastFrame = fPressed;
 
-    // Physics update
     m_physics.Update(deltaTime);
 
-    // Sync camera with controller
     PxExtendedVec3 extendedPos = controller->getPosition();
     m_camera.SetPosition(glm::vec3(static_cast<float>(extendedPos.x),
         static_cast<float>(extendedPos.y),

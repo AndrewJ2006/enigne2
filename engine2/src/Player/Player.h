@@ -2,6 +2,7 @@
 
 #include "PlayerCamera.h"
 #include "Physics.h"
+#include <stdexcept>
 
 class Player {
 public:
@@ -10,15 +11,14 @@ public:
     bool InitPhysics();
     void Update(float deltaTime);
 
-    // Public getter to access camera safely
     PlayerCamera& GetCamera() { return m_camera; }
-    const PlayerCamera& GetCamera() const { return m_camera; }
 
 private:
     PlayerCamera m_camera;
-    PlayerPhysics m_physics;
-    RaycastingPx m_raycast;
-    bool m_jumpPressedLastFrame;
 
+    PlayerPhysics m_physics;  // Your PlayerPhysics from Physics.h
+    RaycastingPx m_raycast;   // Raycasting helper from Physics.h
+
+    bool m_jumpPressedLastFrame = false;
     static bool fPressedLastFrame;
 };
