@@ -1,6 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
-
 #include "World/World.h"
 #include "Types/Wall.h"
 #include "Types/Plane.h"
@@ -11,7 +10,7 @@
 #include "Shader/Shader.h"
 #include "Types/Mesh.h"
 #include "Physics.h"
-
+#include "TerrainGen.h"
 
 #include <memory>
 #include <glm/gtc/matrix_transform.hpp>
@@ -22,7 +21,10 @@
 // Declare the external global vector of Door pointers
 extern std::vector<Door*> g_Doors;
 
-World::World() {}
+World::World()
+    : m_terrain(100, 100, 0.05f, 5.0f) // Width, Depth, Scale, HeightMultiplier
+{
+}
 
 World::~World() {}
 
@@ -33,6 +35,9 @@ void World::Init() {
     // Create static floor
     ScenePx scene;
     scene.CreateStaticFloor();
+
+    // Generate terrain
+    m_terrain.Generate();
 
     // Load JSON file describing the world
     nlohmann::json json = JSONLoader::LoadFromFile("StartHouse.json");
@@ -117,5 +122,14 @@ void World::Draw() {
         shader->SetBool("useTexture", false);
         shader->SetVec3("uColor", glm::vec3(0.55f, 0.27f, 0.07f));
         if (door->GetMesh()) door->GetMesh()->Draw();
+    }
+
+    // Draw terrain (greenish)
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+        shader->SetMat4("model", model);
+        shader->SetBool("useTexture", false);
+        shader->SetVec3("uColor", glm::vec3(0.2f, 0.6f, 0.2f));
+        if (m_terrain.GetMesh()) m_terrain.GetMesh()->Draw();
     }
 }

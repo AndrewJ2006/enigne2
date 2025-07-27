@@ -12,6 +12,7 @@
     src/Game/Game.cpp
     src/AssetManager/AssetManager.cpp
     src/World/World.cpp
+    src/World/TerrainGen.cpp
     src/Types/Cube.cpp
     res/Shader/Shader.cpp
     src/Types/Wall.cpp
@@ -101,6 +102,13 @@ add_custom_command(TARGET Main POST_BUILD
 )
 
 
+
+## FAST NOISE 2
+
+add_subdirectory(libs/FastNoise)
+
+
+
  ##nlohmann json FILE IN OUT FOLDER
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(libs/nlohmann_json)
@@ -165,4 +173,4 @@ target_include_directories(Main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs/glm)
 
 
 
-target_link_libraries(Main PRIVATE nlohmann_json::nlohmann_json glfw glad opengl32)
+target_link_libraries(Main PRIVATE FastNoise2 nlohmann_json::nlohmann_json glfw glad opengl32)
