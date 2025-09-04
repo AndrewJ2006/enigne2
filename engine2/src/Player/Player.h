@@ -16,8 +16,8 @@ public:
 private:
     PlayerCamera m_camera;
 
-    PlayerPhysics m_physics;  // Your PlayerPhysics from Physics.h
-    RaycastingPx m_raycast;   // Raycasting helper from Physics.h
+    PlayerPhysics m_physics; 
+    RaycastingPx m_raycast;   
 
     bool m_jumpPressedLastFrame = false;
     static bool fPressedLastFrame;

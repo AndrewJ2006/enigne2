@@ -4,7 +4,7 @@
 
 class Editor {
 public:
-    Editor() : m_camera(nullptr) {}          // Default constructor
+    Editor() : m_camera(nullptr) {}          
 
     explicit Editor(Camera* cam) : m_camera(cam) {}
 

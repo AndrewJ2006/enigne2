@@ -83,7 +83,7 @@ std::vector<DoorCreateInfo> JSONLoader::ParseDoors(const nlohmann::json& json) {
             door.size = glm::vec3(d["Size"][0], d["Size"][1], d["Size"][2]);
         }
         else {
-            door.size = glm::vec3(1.0f, 2.0f, 0.1f); // default size
+            door.size = glm::vec3(1.0f, 2.0f, 0.1f); 
         }
 
         doors.push_back(door);

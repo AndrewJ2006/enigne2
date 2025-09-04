@@ -1,4 +1,3 @@
-// GLWindow.cpp
 #include "GLWindow.h"
 #include <iostream>
 
@@ -17,7 +16,6 @@ bool GLWindow::CreateWindow(int width, int height, const char* title, WindowedMo
         return false;
     }
 
-    // OpenGL 3.3 Core Profile setup
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -57,7 +55,6 @@ void GLWindow::SwapBuffers() {
 }
 
 void GLWindow::BeginFrame() {
-    // Optional: clear screen here or in your renderer
 }
 
 bool GLWindow::ShouldClose() {

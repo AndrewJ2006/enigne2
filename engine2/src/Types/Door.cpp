@@ -22,7 +22,7 @@ Door::Door(const DoorCreateInfo& createInfo)
 
 void Door::Init() {
     glm::vec3 size = m_createInfo.size;
-    glm::vec3 position = m_createInfo.position; // Position at base of door
+    glm::vec3 position = m_createInfo.position; 
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -41,10 +41,10 @@ void Door::Init() {
     float halfHeight = size.y * 0.5f;
     float halfDepth = size.z * 0.5f;
 
-    // Hinge position: left edge at base of door (no vertical offset)
+    
     glm::vec3 hingePos = position + glm::vec3(-halfWidth, 0.0f, 0.0f);
 
-    // *** IMPORTANT: Move rigid actor up by halfHeight to align collider and mesh pivot ***
+  
     physx::PxTransform hingeTransform(
         physx::PxVec3(hingePos.x, hingePos.y + halfHeight, hingePos.z),
         physx::PxQuat(0, physx::PxVec3(0, 1, 0))
@@ -60,7 +60,7 @@ void Door::Init() {
 
     physx::PxRigidDynamic* dynamicActor = static_cast<physx::PxRigidDynamic*>(m_rigidActor);
 
-    // Keep collider local pose offset to halfHeight so collider extends from base upwards
+    
     physx::PxTransform shapeLocalPose(physx::PxVec3(halfWidth, halfHeight, 0.0f));
 
     physx::PxShape* shape = physics->createShape(boxGeom, *material, true);
@@ -87,7 +87,7 @@ void Door::Init() {
         g_Doors.push_back(this);
     }
 
-    // Model matrix: position door at its base + size offset to center (halfHeight up)
+    
     glm::mat4 transform(1.0f);
     transform = glm::translate(transform, position + glm::vec3(0.0f, halfHeight, 0.0f));
     transform = glm::scale(transform, size);
@@ -111,7 +111,7 @@ void Door::Update(float deltaTime) {
             m_currentAngle = m_targetAngle;
         }
 
-        glm::vec3 position = m_createInfo.position; // base
+        glm::vec3 position = m_createInfo.position;
         float halfWidth = m_createInfo.size.x * 0.5f;
         float halfHeight = m_createInfo.size.y * 0.5f;
 
@@ -139,11 +139,11 @@ void Door::ToggleOpenClose() {
 void Door::UpdatePhysicsTransform() {
     if (!m_rigidActor) return;
 
-    glm::vec3 position = m_createInfo.position; // base
+    glm::vec3 position = m_createInfo.position; 
     float halfWidth = m_createInfo.size.x * 0.5f;
     float halfHeight = m_createInfo.size.y * 0.5f;
 
-    // Align physics transform hinge at base + halfHeight (same as rigid actor initial position)
+  
     glm::vec3 hingePos = position + glm::vec3(-halfWidth, halfHeight, 0.0f);
 
     float radians = glm::radians(m_currentAngle);

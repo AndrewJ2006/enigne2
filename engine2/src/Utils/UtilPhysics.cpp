@@ -5,7 +5,7 @@
 
 using namespace physx;
 
-// Reference the global g_Doors declared elsewhere
+
 extern std::vector<Door*> g_Doors;
 
 namespace Util {

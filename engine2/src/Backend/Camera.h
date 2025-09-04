@@ -13,16 +13,13 @@ enum Camera_Movement {
 
 class Camera {
 public:
-    // Constructors
     Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch);
     Camera(float posX, float posY, float posZ,
         float upX, float upY, float upZ,
         float yaw, float pitch);
 
-    // Virtual destructor
     virtual ~Camera() = default;
 
-    // Update camera each frame (virtual for polymorphism)
     virtual void Update(float deltaTime);
 
     glm::mat4 GetViewMatrix() const;
@@ -32,7 +29,6 @@ public:
     void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
     void ProcessMouseScroll(float yoffset);
 
-    // Getters and setters
     glm::vec3 GetPosition() const;
     void SetPosition(const glm::vec3& position);
 
@@ -63,16 +59,13 @@ protected:
     glm::vec3 Right;
     glm::vec3 WorldUp;
 
-    // Euler Angles
     float Yaw;
     float Pitch;
 
-    // Camera options
     float MovementSpeed;
     float MouseSensitivity;
     float Zoom;
 
-    // Defaults
     static constexpr float DEFAULT_SPEED = 2.5f;
     static constexpr float DEFAULT_SENSITIVITY = 0.1f;
     static constexpr float DEFAULT_ZOOM = 45.0f;

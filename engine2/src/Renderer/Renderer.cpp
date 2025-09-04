@@ -16,7 +16,7 @@ void Renderer::DrawScene(const glm::mat4& view, const glm::mat4& projection, Wor
     s_shader->SetMat4("view", view);
     s_shader->SetMat4("projection", projection);
 
-    world.Draw(); // Delegate drawing of all scene objects to World
+    world.Draw(); 
 }
 
 void Renderer::Shutdown() {

@@ -38,5 +38,5 @@ private:
     bool m_isOpen = false;
 };
 
-// Global door registry for raycasting
+
 extern std::vector<Door*> g_Doors;

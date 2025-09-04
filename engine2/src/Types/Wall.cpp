@@ -1,5 +1,4 @@
 
-// Wall.cpp
 #define GLM_ENABLE_EXPERIMENTAL
 #include "Wall.h"
 #include "Utils.h"
@@ -27,5 +26,5 @@ const std::string& Wall::GetMaterial() const {
 }
 
 void Wall::SetDoors(const std::vector<DoorCreateInfo>& doors) {
-    // Door cutouts can be implemented here if needed later
+    
 }

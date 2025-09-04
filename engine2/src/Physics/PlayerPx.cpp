@@ -9,7 +9,7 @@ PlayerPhysics::PlayerPhysics()
     , m_verticalVelocity(0.0f)
     , m_isJumping(false)
     , m_pendingMovement(0.0f)
-    , m_moveSpeed(30.0f) // default speed
+    , m_moveSpeed(30.0f) 
 {
 }
 
@@ -55,14 +55,13 @@ bool PlayerPhysics::Init(const PxVec3& startPosition) {
 }
 
 void PlayerPhysics::Move(const PxVec3& direction) {
-    // Accumulate horizontal movement input; vertical handled separately
     m_pendingMovement.x += direction.x;
     m_pendingMovement.z += direction.z;
 }
 
 void PlayerPhysics::Jump() {
     if (!m_isJumping && IsOnGround()) {
-        m_verticalVelocity = 7.0f;  // jump impulse strength
+        m_verticalVelocity = 7.0f;  
         m_isJumping = true;
     }
 }
@@ -71,7 +70,6 @@ void PlayerPhysics::Update(float deltaTime) {
     if (!m_controller)
         return;
 
-    // Apply gravity if in air or jumping
     if (m_isJumping || !IsOnGround()) {
         m_verticalVelocity += gravity * deltaTime;
     }
@@ -91,7 +89,6 @@ void PlayerPhysics::Update(float deltaTime) {
     PxControllerFilters filters;
     PxControllerCollisionFlags collisionFlags = m_controller->move(totalMove, 0.001f, deltaTime, filters);
 
-    // Reset movement input after move
     m_pendingMovement = PxVec3(0.0f);
 
     bool onGround = (static_cast<uint32_t>(collisionFlags) & static_cast<uint32_t>(PxControllerCollisionFlag::eCOLLISION_DOWN)) != 0;

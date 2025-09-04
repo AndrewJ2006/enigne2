@@ -1,9 +1,8 @@
-// GLWindow.h
 #pragma once
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "Backend.h"  // For WindowedMode enum
+#include "Backend.h"  
 
 class GLWindow {
 public:

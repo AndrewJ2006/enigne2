@@ -17,14 +17,13 @@ public:
 
 private:
     Player m_player;
-    CameraEditor m_freeCamera;   // Free camera for editor mode
+    CameraEditor m_freeCamera;  
 
-    Camera* m_activeCamera = nullptr;  // Pointer to currently active camera
-
+    Camera* m_activeCamera = nullptr; 
     bool m_cameraTogglePressed = false;
     World m_world;
 
     Editor m_editor;
 };
 
-#endif // GAME_H
+#endif 

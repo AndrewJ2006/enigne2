@@ -13,7 +13,6 @@ static float s_mouseDeltaX = 0.0f;
 static float s_mouseDeltaY = 0.0f;
 static bool cursorDisabled = true;
 
-// Framebuffer resize callback
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
@@ -46,7 +45,7 @@ bool Backend::Init(API api, WindowedMode mode) {
         s_lastMouseX = xpos;
         s_lastMouseY = ypos;
         });
-
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);

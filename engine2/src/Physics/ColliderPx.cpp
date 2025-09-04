@@ -18,7 +18,6 @@ ColliderPx::ColliderPx(const glm::vec3& position, const glm::vec3& size, const g
         return;
     }
 
-    // Convert rotation degrees to quaternion
     glm::quat rotQuat = glm::quat(glm::radians(rotation));
 
     PxTransform transform(
@@ -45,7 +44,6 @@ ColliderPx::ColliderPx(const glm::vec3& position, const glm::vec3& size, const g
     m_rigidStatic->attachShape(*shape);
     shape->release();
 
-    // Add to scene
     PxScene* scene = PhysicsManager::Get().GetScene();
     if (scene) {
         scene->addActor(*m_rigidStatic);

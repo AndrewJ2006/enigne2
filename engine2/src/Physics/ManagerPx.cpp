@@ -60,9 +60,7 @@ void PhysicsManager::Init() {
         return;
     }
 
-    // Ground plane creation removed — floor handled in World or scene JSON
-
-    // Initialize collisions only (no debug)
+    
     m_collisions = std::make_unique<CollisionsPx>(m_scene);
 }
 

@@ -2,12 +2,12 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include <glm/glm.hpp>
-#include <glm/gtx/matrix_decompose.hpp> // For glm::decompose
-#include <glm/gtc/quaternion.hpp>       // For quaternion to euler
+#include <glm/gtx/matrix_decompose.hpp> 
+#include <glm/gtc/quaternion.hpp>      
 
 struct Transform {
     glm::vec3 position = glm::vec3(0.0f);
-    glm::vec3 rotation = glm::vec3(0.0f); // in radians (Euler angles)
+    glm::vec3 rotation = glm::vec3(0.0f); 
     glm::vec3 scale = glm::vec3(1.0f);
 
     glm::mat4 to_mat4() const {

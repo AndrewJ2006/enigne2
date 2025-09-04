@@ -1,5 +1,5 @@
 #include "Mesh.h"
-#include <glad/glad.h> // or your OpenGL loader
+#include <glad/glad.h> 
 
 Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
     : m_vertices(vertices), m_indices(indices) {

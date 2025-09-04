@@ -12,8 +12,8 @@ Cube::Cube(float size)
     indices = Primitives::CreateCubeIndices();
 
     for (const auto& pos : positions) {
-        glm::vec3 normal = glm::normalize(pos); // simplistic normal for now
-        glm::vec2 texCoords(0.0f, 0.0f);        // placeholder UVs
+        glm::vec3 normal = glm::normalize(pos); 
+        glm::vec2 texCoords(0.0f, 0.0f);        
         vertices.emplace_back(pos, normal, texCoords);
     }
 }

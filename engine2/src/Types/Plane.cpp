@@ -1,4 +1,4 @@
-// Plane.cpp
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include "Plane.h"
 #include "Utils.h"

@@ -1,10 +1,10 @@
 #pragma once
 
 #include "CreateInfo.h"
-#include "Mesh.h"   // Adjusted path
+#include "Mesh.h"   
 #include <memory>
 #include <string>
-#include <vector> // for std::vector
+#include <vector> 
 
 class Wall {
 public:
@@ -15,7 +15,7 @@ public:
 
     Mesh* GetMesh() const;
 
-    // Add GetMaterial and SetDoors declarations if used
+   
     const std::string& GetMaterial() const;
     void SetDoors(const std::vector<DoorCreateInfo>& doors);
 

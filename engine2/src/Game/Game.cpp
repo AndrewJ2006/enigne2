@@ -24,15 +24,12 @@ void Game::Init() {
         throw std::runtime_error("Failed to initialize Player physics.");
     }
 
-    // Set starting camera to player camera
     m_activeCamera = &(m_player.GetCamera());
 
-    // Set camera for editor
     m_editor.SetCamera(m_activeCamera);
 }
 
 void Game::Update(float deltaTime) {
-    // Toggle camera on 'C' key press
     if (Backend::IsKeyPressed(GLFW_KEY_C)) {
         if (!m_cameraTogglePressed) {
             if (m_activeCamera == &(m_player.GetCamera())) {
@@ -50,7 +47,6 @@ void Game::Update(float deltaTime) {
         m_cameraTogglePressed = false;
     }
 
-    // Update active camera and player accordingly
     if (m_activeCamera == &(m_player.GetCamera())) {
         m_player.Update(deltaTime);
     }

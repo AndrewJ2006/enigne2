@@ -1,7 +1,7 @@
 #pragma once
 
 #include <FastNoise/FastNoise.h>
-#include <Mesh.h>  // Adjust path based on your project
+#include <Mesh.h>  
 #include <vector>
 #include <memory>
 
@@ -11,7 +11,7 @@ public:
     TerrainGenerator(int width, int depth, float scale, float heightMultiplier);
 
     void Generate();
-    Mesh* GetMesh();  // Add this line
+    Mesh* GetMesh(); 
 
 private:
     int m_width;
@@ -20,5 +20,5 @@ private:
     float m_heightMultiplier;
 
     std::vector<float> m_heightMap;
-    std::unique_ptr<Mesh> m_mesh;  // Store generated mesh here
+    std::unique_ptr<Mesh> m_mesh;  
 };

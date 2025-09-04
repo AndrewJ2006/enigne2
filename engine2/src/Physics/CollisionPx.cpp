@@ -20,25 +20,20 @@ void CollisionsPx::CollisionEventCallback::onContact(const PxContactPairHeader& 
 }
 
 void CollisionsPx::CollisionEventCallback::onTrigger(PxTriggerPair* pairs, PxU32 count) {
-    // No operation
 }
 
 void CollisionsPx::CollisionEventCallback::onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) {
-    // No operation
 }
 
 void CollisionsPx::CollisionEventCallback::onWake(PxActor** actors, PxU32 count) {
-    // No operation
 }
 
 void CollisionsPx::CollisionEventCallback::onSleep(PxActor** actors, PxU32 count) {
-    // No operation
 }
 
 void CollisionsPx::CollisionEventCallback::onAdvance(const PxRigidBody* const* bodyBuffer,
     const PxTransform* poseBuffer,
     PxU32 count) {
-    // No operation (required override in PhysX 5)
 }
 
 // ----------------- CollisionsPx -----------------
@@ -63,5 +58,4 @@ void CollisionsPx::SetCollisionCallback(CollisionCallback callback) {
 }
 
 void CollisionsPx::ProcessCollisions() {
-    // Optional: implement if manual collision processing is required
 }

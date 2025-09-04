@@ -14,7 +14,7 @@ public:
     unsigned int VAO, VBO, EBO;
 
     glm::vec3 position;
-    glm::vec3 rotation;  // Euler angles in radians
+    glm::vec3 rotation;  
     glm::vec3 scale;
 
     Cube(float size = 1.0f);

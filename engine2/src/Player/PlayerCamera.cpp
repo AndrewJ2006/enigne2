@@ -10,7 +10,7 @@ PlayerCamera::PlayerCamera()
 }
 
 void PlayerCamera::Update(float deltaTime) {
-    // Only process mouse movement for rotation here
+    
     float mouseX, mouseY;
     Backend::GetMouseDelta(mouseX, mouseY);
     ProcessMouseMovement(mouseX, mouseY);

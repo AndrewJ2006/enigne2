@@ -31,7 +31,6 @@ Camera::Camera(float posX, float posY, float posZ,
 }
 
 void Camera::Update(float deltaTime) {
-    // Default implementation does nothing
 }
 
 glm::mat4 Camera::GetViewMatrix() const {
