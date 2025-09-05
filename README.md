@@ -1,7 +1,7 @@
 # Engine2
 
 My first C++ game engine.  
-I am not expanding on this project anymore because I am in the process of creating a more efficient design.  
+I am no longer expanding this project, as I’ve moved on to a more efficient design that is rapildy growing.
 
 ### Overview
 
