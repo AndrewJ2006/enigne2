@@ -1,0 +1,21 @@
+*.html linguist-documentation=true
+
+*.vert linguist-language=C++
+*.frag linguist-language=C++
+
+res/* linguist-documentation=true
+libs/** linguist-vendored
+res/** linguist-vendored
+
+*.dll linguist-generated=true
+
+libs/FastNoise/* linguist-vendored
+libs/glad/* linguist-vendored
+libs/glfw/* linguist-vendored
+libs/glm/* linguist-vendored
+libs/nlohmann_json/* linguist-vendored
+<<<<<<< HEAD
+libs/physx/* linguist-vendored
+=======
+libs/physx/* linguist-vendored
+>>>>>>> 44cc4912c4638b0d97875398a85e2f53d50cc1a0

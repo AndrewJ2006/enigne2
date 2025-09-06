@@ -1,0 +1,29 @@
+# CMake build directories
+build/
+out/
+.vs/
+
+# Visual Studio
+*.sln
+*.vcxproj*
+*.vcxproj.filters
+*.user
+*.obj
+*.pdb
+*.log
+*.idb
+*.ipch
+*.tlog
+*.opensdf
+*.sdf
+*.db
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# PhysX and third-party builds
+dependencies/**/build/
+dependencies/**/bin/
+dependencies/**/lib/
+
