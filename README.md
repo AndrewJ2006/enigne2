@@ -42,7 +42,7 @@ It combines rendering, physics, and procedural terrain to provide a simple sandb
   - [PhysX](https://github.com/NVIDIAGameWorks/PhysX)  
   - [stb](https://github.com/nothings/stb)  
   - [FastNoiseLite](https://github.com/Auburn/FastNoiseLite)  
-  - A JSON parsing library (e.g., [nlohmann/json](https://github.com/nlohmann/json))  
+  - A JSON parsing library ([nlohmann/json](https://github.com/nlohmann/json))  
 ---
 ### Build Instructions
 
