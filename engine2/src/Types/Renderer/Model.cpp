@@ -37,30 +37,42 @@ void Model::LoadModel(const std::string& path) {
 }
 
 void Model::ProcessNode(aiNode* node, const aiScene* scene) {
+    // Start with the node's transform (assimp uses row-major aiMatrix4x4)
+    aiMatrix4x4 nodeTransform = node->mTransformation;
+
     for (unsigned int i = 0; i < node->mNumMeshes; ++i) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(std::move(ProcessMesh(mesh, scene)));
+        meshes.push_back(std::move(ProcessMesh(mesh, scene, nodeTransform)));
     }
 
     for (unsigned int i = 0; i < node->mNumChildren; ++i) {
-        ProcessNode(node->mChildren[i], scene);
+        // Propagate transform down the hierarchy
+        aiNode* child = node->mChildren[i];
+        // multiply child's transform by parent's for local-to-global
+        child->mTransformation = nodeTransform * child->mTransformation;
+        ProcessNode(child, scene);
     }
 }
 
-Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
+Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene, const aiMatrix4x4& transform) {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
 
     
+    // Convert aiMatrix4x4 to glm::mat4
+    glm::mat4 nodeMat(1.0f);
+    nodeMat[0][0] = transform.a1; nodeMat[1][0] = transform.a2; nodeMat[2][0] = transform.a3; nodeMat[3][0] = transform.a4;
+    nodeMat[0][1] = transform.b1; nodeMat[1][1] = transform.b2; nodeMat[2][1] = transform.b3; nodeMat[3][1] = transform.b4;
+    nodeMat[0][2] = transform.c1; nodeMat[1][2] = transform.c2; nodeMat[2][2] = transform.c3; nodeMat[3][2] = transform.c4;
+    nodeMat[0][3] = transform.d1; nodeMat[1][3] = transform.d2; nodeMat[2][3] = transform.d3; nodeMat[3][3] = transform.d4;
+
     for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
         Vertex vertex;
 
-        vertex.position = glm::vec3(
-            mesh->mVertices[i].x,
-            mesh->mVertices[i].y,
-            mesh->mVertices[i].z
-        );
+        glm::vec4 p(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1.0f);
+        glm::vec4 tp = nodeMat * p;
+        vertex.position = glm::vec3(tp.x, tp.y, tp.z);
 
         vertex.normal = mesh->HasNormals()
             ? glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z)
