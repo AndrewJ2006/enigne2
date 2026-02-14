@@ -11,6 +11,7 @@
 
     src/Game/Game.cpp
     src/AssetManager/AssetManager.cpp
+    src/AssetManager/AssetModel.cpp
     src/World/World.cpp
     src/World/TerrainGen.cpp
     src/Types/Cube.cpp
@@ -31,6 +32,9 @@
 
     src/Utils/UtilMesh.cpp
     src/Utils/UtilPhysics.cpp
+
+    src/Types/Renderer/Model.cpp
+    src/Renderer/Texture.cpp
 
 )
 
@@ -54,6 +58,7 @@ target_include_directories(Main PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Player
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Utils
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Editor
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Types/Renderer
 
 
     ${CMAKE_CURRENT_SOURCE_DIR}/res/Geometry
@@ -101,7 +106,31 @@ add_custom_command(TARGET Main POST_BUILD
     COMMENT "Copying all JSON files to output directory"
 )
 
+## Copy Models directory to output
+add_custom_command(TARGET Main POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Copying Model files..."
+    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:Main>/res/Models
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/res/Models"
+            $<TARGET_FILE_DIR:Main>/res/Models
+    COMMENT "Copying all Model files to output directory"
+)
 
+
+
+## ASSIMP
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+add_subdirectory(libs/assimp)
+target_link_libraries(Main PRIVATE assimp)
+target_include_directories(Main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs/assimp/include)
+
+## STB_IMAGE
+add_subdirectory(libs/stb_image)
+target_link_libraries(Main PRIVATE stb_image)
 
 ## FAST NOISE 2
 

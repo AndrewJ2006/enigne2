@@ -11,6 +11,7 @@
 #include "Types/Mesh.h"
 #include "Physics.h"
 #include "TerrainGen.h"
+#include "Model.h"
 
 #include <memory>
 #include <glm/gtc/matrix_transform.hpp>
@@ -76,7 +77,25 @@ void World::Init() {
         m_planes.push_back(std::move(plane));
     }
 
+    // Load models from JSON
+    std::vector<ModelCreateInfo> modelInfos = JSONLoader::ParseModels(json);
+    for (const auto& modelInfo : modelInfos) {
+        WorldModel wm;
+        wm.model = AssetManager::LoadModel(modelInfo.path);
+        
+        glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, modelInfo.position);
+        transform = glm::rotate(transform, glm::radians(modelInfo.rotation.x), glm::vec3(1, 0, 0));
+        transform = glm::rotate(transform, glm::radians(modelInfo.rotation.y), glm::vec3(0, 1, 0));
+        transform = glm::rotate(transform, glm::radians(modelInfo.rotation.z), glm::vec3(0, 0, 1));
+        transform = glm::scale(transform, modelInfo.scale);
+        wm.transform = transform;
+
+        m_models.push_back(std::move(wm));
+    }
+
     std::cout << "World initialized from JSON\n";
+    std::cout << "Models loaded: " << m_models.size() << "\n";
 }
 
 void World::Update(float deltaTime) {
@@ -124,12 +143,20 @@ void World::Draw() {
         if (door->GetMesh()) door->GetMesh()->Draw();
     }
 
-   
+    // Draw terrain
     {
         glm::mat4 model = glm::mat4(1.0f);
         shader->SetMat4("model", model);
         shader->SetBool("useTexture", false);
         shader->SetVec3("uColor", glm::vec3(0.2f, 0.6f, 0.2f));
         if (m_terrain.GetMesh()) m_terrain.GetMesh()->Draw();
+    }
+
+    // Draw loaded models
+    for (const auto& wm : m_models) {
+        if (wm.model) {
+            shader->SetMat4("model", wm.transform);
+            wm.model->Draw(*shader);
+        }
     }
 }

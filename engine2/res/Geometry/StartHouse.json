@@ -127,6 +127,20 @@
             "UseReversePointOrder": false,
             "WallType": "INTERIOR"
         }
+    ],
+    "Models": [
+        {
+            "Path": "res/Models/ak_47.fbx",
+            "Position": [ 0.0, 5.0, 0.0 ],
+            "Rotation": [ 0.0, 0.0, 0.0 ],
+            "Scale": [ 1.0, 1.0, 1.0 ]
+        },
+        {
+            "Path": "res/Models/tree.fbx",
+            "Position": [ 5.0, 5.0, 0.0 ],
+            "Rotation": [ 0.0, 0.0, 0.0 ],
+            "Scale": [ 1.0, 1.0, 1.0 ]
+        }
     ]
 }
 

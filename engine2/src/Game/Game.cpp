@@ -69,7 +69,6 @@ void Game::Render() {
     glm::mat4 projection = m_activeCamera->GetProjectionMatrix(aspect, 0.1f, 100.0f);
 
     Renderer::DrawScene(view, projection, m_world);
-    m_world.Draw();
 }
 
 bool Game::ShouldClose() {

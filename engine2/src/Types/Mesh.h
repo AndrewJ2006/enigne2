@@ -3,17 +3,28 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "Types.h"
+#include "Shader.h"
+#include "Texture.h"
 
 class Mesh {
 public:
     Mesh() = default;
-    Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
+    Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures = {});
     ~Mesh();
+
+    // Move semantics (prevent VAO/VBO/EBO from being destroyed on vector resize)
+    Mesh(Mesh&& other) noexcept;
+    Mesh& operator=(Mesh&& other) noexcept;
+
+    // Disable copy (would cause double-free of OpenGL resources)
+    Mesh(const Mesh&) = delete;
+    Mesh& operator=(const Mesh&) = delete;
 
     void Create(const glm::vec3& size, const glm::vec3& color);
     void SetupMesh();
 
     void Draw() const;
+    void Draw(Shader& shader) const;
 
     void SetModelMatrix(const glm::mat4& model) { m_modelMatrix = model; }
     glm::mat4 GetModelMatrix() const { return m_modelMatrix; }
@@ -21,6 +32,7 @@ public:
 private:
     std::vector<Vertex> m_vertices;
     std::vector<unsigned int> m_indices;
+    std::vector<Texture> m_textures;
 
     unsigned int m_VAO = 0, m_VBO = 0, m_EBO = 0;
 

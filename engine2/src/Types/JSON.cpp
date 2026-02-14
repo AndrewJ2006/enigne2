@@ -91,3 +91,27 @@ std::vector<DoorCreateInfo> JSONLoader::ParseDoors(const nlohmann::json& json) {
 
     return doors;
 }
+
+std::vector<ModelCreateInfo> JSONLoader::ParseModels(const nlohmann::json& json) {
+    std::vector<ModelCreateInfo> models;
+    if (!json.contains("Models")) return models;
+
+    for (const auto& m : json["Models"]) {
+        ModelCreateInfo model;
+        model.path = m.value("Path", "");
+
+        if (m.contains("Position") && m["Position"].is_array() && m["Position"].size() == 3) {
+            model.position = glm::vec3(m["Position"][0], m["Position"][1], m["Position"][2]);
+        }
+        if (m.contains("Rotation") && m["Rotation"].is_array() && m["Rotation"].size() == 3) {
+            model.rotation = glm::vec3(m["Rotation"][0], m["Rotation"][1], m["Rotation"][2]);
+        }
+        if (m.contains("Scale") && m["Scale"].is_array() && m["Scale"].size() == 3) {
+            model.scale = glm::vec3(m["Scale"][0], m["Scale"][1], m["Scale"][2]);
+        }
+
+        models.push_back(model);
+    }
+
+    return models;
+}

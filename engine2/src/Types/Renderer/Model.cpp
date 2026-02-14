@@ -39,7 +39,7 @@ void Model::LoadModel(const std::string& path) {
 void Model::ProcessNode(aiNode* node, const aiScene* scene) {
     for (unsigned int i = 0; i < node->mNumMeshes; ++i) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(ProcessMesh(mesh, scene));
+        meshes.push_back(std::move(ProcessMesh(mesh, scene)));
     }
 
     for (unsigned int i = 0; i < node->mNumChildren; ++i) {

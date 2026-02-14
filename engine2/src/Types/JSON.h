@@ -12,4 +12,5 @@ public:
     static std::vector<WallCreateInfo> ParseWalls(const nlohmann::json& json);
     static std::vector<PlaneCreateInfo> ParsePlanes(const nlohmann::json& json);
     static std::vector<DoorCreateInfo> ParseDoors(const nlohmann::json& json);
+    static std::vector<ModelCreateInfo> ParseModels(const nlohmann::json& json);
 };
